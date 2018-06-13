@@ -17,7 +17,7 @@ var DESCRIPTION = [
 ];
 var POSTS_NEEDED = 25;
 var IMG_PROPERTIES = {
-  src: 'photos/',
+  path: 'photos/',
   extension: '.jpg'
 };
 var COMMENTS_ON_PAGE = 2;
@@ -28,7 +28,7 @@ var generatePost = function (count) {
   var post = {
     comments: []
   };
-  post.url = IMG_PROPERTIES.src + count + IMG_PROPERTIES.extension;
+  post.url = IMG_PROPERTIES.path + count + IMG_PROPERTIES.extension;
   post.likes = Math.max(Math.round((Math.random() * 200), 15));
   post.comments.push(getRandomArrayElement(COMMENTS));
   if (Math.round(Math.random())) {
