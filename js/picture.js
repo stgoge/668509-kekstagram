@@ -22,6 +22,10 @@ var IMG_PROPERTIES = {
 };
 var COMMENTS_ON_PAGE = 2;
 var NUMBER_OF_POST_FOR_BIG_PICTURE = 0;
+var LIKES_PROPERTIES = {
+  max: 200,
+  min: 15
+};
 var getRandomArrayElement = function (array) {
   return array[Math.floor(Math.random() * array.length)];
 };
@@ -30,7 +34,7 @@ var generatePost = function (count) {
     comments: []
   };
   post.url = IMG_PROPERTIES.path + count + IMG_PROPERTIES.extension;
-  post.likes = Math.max(Math.round((Math.random() * 200), 15));
+  post.likes = Math.max(Math.round((Math.random() * LIKES_PROPERTIES.max), LIKES_PROPERTIES.min));
   post.comments.push(getRandomArrayElement(COMMENTS));
   if (Math.round(Math.random())) {
     post.comments.push(getRandomArrayElement(COMMENTS));
