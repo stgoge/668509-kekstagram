@@ -15,7 +15,7 @@ var DESCRIPTION = [
   'Цените каждое мгновенье. Цените тех, кто рядом с вами и отгоняйте все сомненья. Не обижайте всех словами......',
   'Вот это тачка!'
 ];
-var PAGES_NEEDED = 25;
+var POSTS_NEEDED = 25;
 var IMG_PROPERTIES = {
   src: 'photos/',
   extension: '.jpg'
@@ -55,7 +55,7 @@ var renderPostPreview = function (post) {
 var renderPreviewPage = function (posts) {
   var previewPage = document.querySelector('.pictures');
   var fragment = document.createDocumentFragment();
-  for (var i = 0; i < PAGES_NEEDED; i++) {
+  for (var i = 0; i < POSTS_NEEDED; i++) {
     fragment.appendChild(renderPostPreview(posts[i]));
   }
   previewPage.appendChild(fragment);
@@ -83,7 +83,7 @@ var showBigPicture = function (post) {
   document.querySelector('.social__loadmore').classList.add('visually-hidden');
 };
 var showPictures = function () {
-  var posts = generatePosts(PAGES_NEEDED);
+  var posts = generatePosts(POSTS_NEEDED);
   renderPreviewPage(posts);
   showBigPicture(posts[0]);
 };
