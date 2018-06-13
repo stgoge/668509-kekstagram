@@ -21,7 +21,7 @@ var IMG_PROPERTIES = {
   extension: '.jpg'
 };
 var COMMENTS_ON_PAGE = 2;
-var NUMBER_OF_POST_FOR_BIR_PICTURE = 0;
+var NUMBER_OF_POST_FOR_BIG_PICTURE = 0;
 var getRandomArrayElement = function (array) {
   return array[Math.floor(Math.random() * array.length)];
 };
@@ -84,6 +84,6 @@ var showBigPicture = function (post) {
 var showPictures = function () {
   var posts = generatePosts(POSTS_NEEDED);
   renderPreviewPage(posts);
-  showBigPicture(posts[NUMBER_OF_POST_FOR_BIR_PICTURE]);
+  showBigPicture(posts[NUMBER_OF_POST_FOR_BIG_PICTURE]);
 };
 showPictures();
