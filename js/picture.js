@@ -15,20 +15,18 @@ var DESCRIPTIONS = [
   'Цените каждое мгновенье. Цените тех, кто рядом с вами и отгоняйте все сомненья. Не обижайте всех словами......',
   'Вот это тачка!'
 ];
-var PROPERTIES = {
-  postCount: 25,
-  img: {
-    path: 'photos/',
-    extension: '.jpg'
-  },
-  comment: {
-    min: 3,
-    max: 5
-  },
-  likes: {
-    min: 15,
-    max: 200
-  }
+var POST_COUNT = 25;
+var IMG_PROPERTY = {
+  path: 'photos/',
+  extension: '.jpg'
+};
+var COMMENTS_PROPERTY = {
+  min: 1,
+  max: 3
+};
+var LIKES_PROPERTY = {
+  min: 15,
+  max: 200
 };
 var getRandomIntFromRange = function (min, max) {
   return (Math.round((Math.random() * (max - min))) + min);
@@ -37,15 +35,15 @@ var getRandomListElement = function (list) {
   return list[getRandomIntFromRange(0, list.length - 1)];
 };
 var getPictureUrl = function (number) {
-  return PROPERTIES.img.path + number + PROPERTIES.img.extension;
+  return IMG_PROPERTY.path + number + IMG_PROPERTY.extension;
 };
 var generatePost = function (count) {
   var post = {
     comments: []
   };
   post.url = getPictureUrl(count);
-  post.likes = getRandomIntFromRange(PROPERTIES.likes.min, PROPERTIES.likes.max);
-  var commentsCount = getRandomIntFromRange(PROPERTIES.comment.min, PROPERTIES.comment.max);
+  post.likes = getRandomIntFromRange(LIKES_PROPERTY.min, LIKES_PROPERTY.max);
+  var commentsCount = getRandomIntFromRange(COMMENTS_PROPERTY.min, COMMENTS_PROPERTY.max);
   for (var i = 0; i < commentsCount; i++) {
     post.comments.push(getRandomListElement(COMMENTS));
   }
@@ -72,10 +70,19 @@ var renderComment = function (path, text) {
   renderedComment.querySelector('p').textContent = text;
   return renderedComment;
 };
+var renderComments = function (post) {
+  var comments = document.createDocumentFragment();
+  var commentUrl;
+  for (var i = 0; i < post.comments.length; i++) {
+    commentUrl = 'img/avatar-' + getRandomIntFromRange(1, 6) + '.svg';
+    comments.appendChild(renderComment(commentUrl, post.comments[i]));
+  }
+  return comments;
+};
 var renderPreviewPage = function (posts) {
   var previewPage = document.querySelector('.pictures');
   var fragment = document.createDocumentFragment();
-  for (var i = 0; i < PROPERTIES.postCount; i++) {
+  for (var i = 0; i < POST_COUNT; i++) {
     fragment.appendChild(renderPostPreview(posts[i]));
   }
   previewPage.appendChild(fragment);
@@ -87,20 +94,15 @@ var renderBigPicture = function (post) {
   bigPictureClone.querySelector('.big-picture__img img').src = post.url;
   bigPictureClone.querySelector('.likes-count').textContent = post.likes;
   bigPictureClone.querySelector('.comments-count').textContent = post.comments.length;
-  var comments = document.createDocumentFragment();
-  var commentUrl;
-  for (var i = 0; i < post.comments.length; i++) {
-    commentUrl = 'img/avatar-' + getRandomIntFromRange(1, 6) + '.svg';
-    comments.appendChild(renderComment(commentUrl, post.comments[i]));
-  }
-  bigPictureClone.querySelector('.social__comments').appendChild(comments);
+  bigPictureClone.querySelector('.social__comments').innerHTML = '';
+  bigPictureClone.querySelector('.social__comments').appendChild(renderComments(post));
   bigPictureClone.querySelector('.social__caption').textContent = post.DESCRIPTIONS;
   bigPicture.parentNode.replaceChild(bigPictureClone, bigPicture);
   document.querySelector('.social__comment-count').classList.add('visually-hidden');
   document.querySelector('.social__loadmore').classList.add('visually-hidden');
 };
 var showPictures = function () {
-  var posts = generatePosts(PROPERTIES.postCount);
+  var posts = generatePosts(POST_COUNT);
   renderPreviewPage(posts);
   renderBigPicture(posts[0]);
 };
