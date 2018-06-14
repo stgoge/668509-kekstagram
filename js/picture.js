@@ -20,7 +20,10 @@ var IMG_PROPERTY = {
   path: 'photos/',
   extension: '.jpg'
 };
-var COMMENTS_ON_PAGE = 2;
+var COMMENT_PROPERTY = {
+  min: 4,
+  max: 7
+};
 var LIKES_PROPERTY = {
   max: 200,
   min: 15
@@ -28,8 +31,8 @@ var LIKES_PROPERTY = {
 var getRandomIntFromRange = function (min, max) {
   return (Math.round((Math.random() * (max - min))) + min);
 };
-var getRandomListElement = function (array) {
-  return array[getRandomIntFromRange(0, array.length - 1)];
+var getRandomListElement = function (list) {
+  return list[getRandomIntFromRange(0, list.length - 1)];
 };
 var getPictureUrl = function (number) {
   return IMG_PROPERTY.path + number + IMG_PROPERTY.extension;
@@ -40,8 +43,8 @@ var generatePost = function (count) {
   };
   post.url = getPictureUrl(count);
   post.likes = getRandomIntFromRange(LIKES_PROPERTY.min, LIKES_PROPERTY.max);
-  post.comments.push(getRandomListElement(COMMENTS));
-  if (getRandomIntFromRange(0, 1)) {
+  var commentsCount = getRandomIntFromRange(COMMENT_PROPERTY.min, COMMENT_PROPERTY.max);
+  for (var i = 0; i < commentsCount; i++) {
     post.comments.push(getRandomListElement(COMMENTS));
   }
   post.DESCRIPTIONS = getRandomListElement(DESCRIPTIONS);
@@ -61,6 +64,12 @@ var renderPostPreview = function (post) {
   renderedPost.querySelector('.picture__stat--comments').textContent = post.comments.length;
   return renderedPost;
 };
+var renderComment = function (avatar, text) {
+  var renderedComment = document.querySelector('#comment').content.querySelector('.social__comment').cloneNode(true);
+  renderedComment.querySelector('img').src = avatar;
+  renderedComment.querySelector('p').textContent = text;
+  return renderedComment;
+};
 var renderPreviewPage = function (posts) {
   var previewPage = document.querySelector('.pictures');
   var fragment = document.createDocumentFragment();
@@ -76,15 +85,13 @@ var showBigPicture = function (post) {
   bigPictureClone.querySelector('.big-picture__img img').src = post.url;
   bigPictureClone.querySelector('.likes-count').textContent = post.likes;
   bigPictureClone.querySelector('.comments-count').textContent = post.comments.length;
-  var comments = bigPictureClone.querySelectorAll('.social__comment');
-  for (var i = 0; i < COMMENTS_ON_PAGE; i++) {
-    if (post.comments[i]) {
-      comments[i].querySelector('.social__picture').src = 'img/avatar-' + getRandomIntFromRange(1, 6) + '.svg';
-      comments[i].querySelector('.social__text').textContent = post.comments[i];
-    } else {
-      comments[i].classList.add('visually-hidden');
-    }
+  var comments = document.createDocumentFragment();
+  var commentUrl;
+  for (var i = 0; i < post.comments.length; i++) {
+    commentUrl = 'img/avatar-' + getRandomIntFromRange(1, 6) + '.svg';
+    comments.appendChild(renderComment(commentUrl, post.comments[i]));
   }
+  bigPictureClone.querySelector('.social__comments').appendChild(comments);
   bigPictureClone.querySelector('.social__caption').textContent = post.DESCRIPTIONS;
   bigPicture.parentNode.replaceChild(bigPictureClone, bigPicture);
   document.querySelector('.social__comment-count').classList.add('visually-hidden');
