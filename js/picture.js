@@ -15,18 +15,20 @@ var DESCRIPTIONS = [
   'Цените каждое мгновенье. Цените тех, кто рядом с вами и отгоняйте все сомненья. Не обижайте всех словами......',
   'Вот это тачка!'
 ];
-var POSTS_COUNT = 25;
-var IMG_PROPERTY = {
-  path: 'photos/',
-  extension: '.jpg'
-};
-var COMMENT_PROPERTY = {
-  min: 4,
-  max: 7
-};
-var LIKES_PROPERTY = {
-  max: 200,
-  min: 15
+var PROPERTIES = {
+  postCount: 25,
+  img: {
+    path: 'photos/',
+    extension: '.jpg'
+  },
+  comment: {
+    min: 3,
+    max: 5
+  },
+  likes: {
+    min: 15,
+    max: 200
+  }
 };
 var getRandomIntFromRange = function (min, max) {
   return (Math.round((Math.random() * (max - min))) + min);
@@ -35,15 +37,15 @@ var getRandomListElement = function (list) {
   return list[getRandomIntFromRange(0, list.length - 1)];
 };
 var getPictureUrl = function (number) {
-  return IMG_PROPERTY.path + number + IMG_PROPERTY.extension;
+  return PROPERTIES.img.path + number + PROPERTIES.img.extension;
 };
 var generatePost = function (count) {
   var post = {
     comments: []
   };
   post.url = getPictureUrl(count);
-  post.likes = getRandomIntFromRange(LIKES_PROPERTY.min, LIKES_PROPERTY.max);
-  var commentsCount = getRandomIntFromRange(COMMENT_PROPERTY.min, COMMENT_PROPERTY.max);
+  post.likes = getRandomIntFromRange(PROPERTIES.likes.min, PROPERTIES.likes.max);
+  var commentsCount = getRandomIntFromRange(PROPERTIES.comment.min, PROPERTIES.comment.max);
   for (var i = 0; i < commentsCount; i++) {
     post.comments.push(getRandomListElement(COMMENTS));
   }
@@ -73,7 +75,7 @@ var renderComment = function (avatar, text) {
 var renderPreviewPage = function (posts) {
   var previewPage = document.querySelector('.pictures');
   var fragment = document.createDocumentFragment();
-  for (var i = 0; i < POSTS_COUNT; i++) {
+  for (var i = 0; i < PROPERTIES.postCount; i++) {
     fragment.appendChild(renderPostPreview(posts[i]));
   }
   previewPage.appendChild(fragment);
@@ -98,7 +100,7 @@ var renderBigPicture = function (post) {
   document.querySelector('.social__loadmore').classList.add('visually-hidden');
 };
 var showPictures = function () {
-  var posts = generatePosts(POSTS_COUNT);
+  var posts = generatePosts(PROPERTIES.postCount);
   renderPreviewPage(posts);
   renderBigPicture(posts[0]);
 };
