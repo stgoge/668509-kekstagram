@@ -66,9 +66,9 @@ var renderPostPreview = function (post) {
   renderedPost.querySelector('.picture__stat--comments').textContent = post.comments.length;
   return renderedPost;
 };
-var renderComment = function (avatar, text) {
+var renderComment = function (path, text) {
   var renderedComment = document.querySelector('#comment').content.querySelector('.social__comment').cloneNode(true);
-  renderedComment.querySelector('img').src = avatar;
+  renderedComment.querySelector('img').src = path;
   renderedComment.querySelector('p').textContent = text;
   return renderedComment;
 };
