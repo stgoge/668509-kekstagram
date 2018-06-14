@@ -78,7 +78,7 @@ var renderPreviewPage = function (posts) {
   }
   previewPage.appendChild(fragment);
 };
-var showBigPicture = function (post) {
+var renderBigPicture = function (post) {
   var bigPicture = document.querySelector('.big-picture');
   var bigPictureClone = bigPicture.cloneNode(true);
   bigPictureClone.classList.remove('hidden');
@@ -100,6 +100,6 @@ var showBigPicture = function (post) {
 var showPictures = function () {
   var posts = generatePosts(POSTS_COUNT);
   renderPreviewPage(posts);
-  showBigPicture(posts[0]);
+  renderBigPicture(posts[0]);
 };
 showPictures();
