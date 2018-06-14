@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Герман Б](https://up.htmlacademy.ru/javascript/14/user/668509).
-* Наставник: `Алексей Пересмехин`.
+* Наставник: [Алексей Пересмехин] (https://github.com/AlekseyPn).
 
 ---
 
