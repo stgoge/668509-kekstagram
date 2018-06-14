@@ -7,7 +7,7 @@ var COMMENTS = [
   'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
 ];
-var DESCRIPTION = [
+var DESCRIPTIONS = [
   'Тестим новую камеру!',
   'Затусили с друзьями на море',
   'Как же круто тут кормят',
@@ -15,31 +15,36 @@ var DESCRIPTION = [
   'Цените каждое мгновенье. Цените тех, кто рядом с вами и отгоняйте все сомненья. Не обижайте всех словами......',
   'Вот это тачка!'
 ];
-var POSTS_NEEDED = 25;
-var IMG_PROPERTIES = {
+var POSTS_COUNT = 25;
+var IMG_PROPERTY = {
   path: 'photos/',
   extension: '.jpg'
 };
 var COMMENTS_ON_PAGE = 2;
-var NUMBER_OF_POST_FOR_BIG_PICTURE = 0;
-var LIKES_PROPERTIES = {
+var LIKES_PROPERTY = {
   max: 200,
   min: 15
 };
-var getRandomArrayElement = function (array) {
-  return array[Math.floor(Math.random() * array.length)];
+var getRandomIntFromRange = function (min, max) {
+  return (Math.round((Math.random() * (max - min))) + min);
+};
+var getRandomListElement = function (array) {
+  return array[getRandomIntFromRange(0, array.length - 1)];
+};
+var getPictureUrl = function (number) {
+  return IMG_PROPERTY.path + number + IMG_PROPERTY.extension;
 };
 var generatePost = function (count) {
   var post = {
     comments: []
   };
-  post.url = IMG_PROPERTIES.path + count + IMG_PROPERTIES.extension;
-  post.likes = Math.max(Math.round((Math.random() * LIKES_PROPERTIES.max), LIKES_PROPERTIES.min));
-  post.comments.push(getRandomArrayElement(COMMENTS));
-  if (Math.round(Math.random())) {
-    post.comments.push(getRandomArrayElement(COMMENTS));
+  post.url = getPictureUrl(count);
+  post.likes = getRandomIntFromRange(LIKES_PROPERTY.min, LIKES_PROPERTY.max);
+  post.comments.push(getRandomListElement(COMMENTS));
+  if (getRandomIntFromRange(0, 1)) {
+    post.comments.push(getRandomListElement(COMMENTS));
   }
-  post.description = getRandomArrayElement(DESCRIPTION);
+  post.DESCRIPTIONS = getRandomListElement(DESCRIPTIONS);
   return post;
 };
 var generatePosts = function (count) {
@@ -59,7 +64,7 @@ var renderPostPreview = function (post) {
 var renderPreviewPage = function (posts) {
   var previewPage = document.querySelector('.pictures');
   var fragment = document.createDocumentFragment();
-  for (var i = 0; i < POSTS_NEEDED; i++) {
+  for (var i = 0; i < POSTS_COUNT; i++) {
     fragment.appendChild(renderPostPreview(posts[i]));
   }
   previewPage.appendChild(fragment);
@@ -74,20 +79,20 @@ var showBigPicture = function (post) {
   var comments = bigPictureClone.querySelectorAll('.social__comment');
   for (var i = 0; i < COMMENTS_ON_PAGE; i++) {
     if (post.comments[i]) {
-      comments[i].querySelector('.social__picture').src = 'img/avatar-' + Math.ceil(Math.random() * 5) + '.svg';
+      comments[i].querySelector('.social__picture').src = 'img/avatar-' + getRandomIntFromRange(1, 6) + '.svg';
       comments[i].querySelector('.social__text').textContent = post.comments[i];
     } else {
       comments[i].classList.add('visually-hidden');
     }
   }
-  bigPictureClone.querySelector('.social__caption').textContent = post.description;
+  bigPictureClone.querySelector('.social__caption').textContent = post.DESCRIPTIONS;
   bigPicture.parentNode.replaceChild(bigPictureClone, bigPicture);
   document.querySelector('.social__comment-count').classList.add('visually-hidden');
   document.querySelector('.social__loadmore').classList.add('visually-hidden');
 };
 var showPictures = function () {
-  var posts = generatePosts(POSTS_NEEDED);
+  var posts = generatePosts(POSTS_COUNT);
   renderPreviewPage(posts);
-  showBigPicture(posts[NUMBER_OF_POST_FOR_BIG_PICTURE]);
+  showBigPicture(posts[0]);
 };
 showPictures();
