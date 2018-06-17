@@ -1,4 +1,11 @@
 'use strict';
+var ESC_KEYCODE = 27;
+var DEFAULT_SCALE_VALUE = 20;
+var IMG_RESIZE_PROPERTY = {
+  minScale: 25,
+  maxScale: 100,
+  step: 25
+};
 var COMMENTS = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',
@@ -28,6 +35,40 @@ var LIKES_PROPERTY = {
   min: 15,
   max: 200
 };
+
+var IMAGE_STYLE_PROPERTY = {
+  'effect-chrome': {
+    cssStyle: 'effects__preview--chrome',
+    minScaleValue: 0,
+    maxScaleValue: 1,
+    filterStringBigins: 'grayscale(',
+    filterStringEnds: ')'},
+  'effect-sepia': {
+    cssStyle: 'effects__preview--sepia',
+    minScaleValue: 0,
+    maxScaleValue: 1,
+    filterStringBigins: 'sepia(',
+    filterStringEnds: ')'},
+  'effect-marvin': {
+    cssStyle: 'effects__preview--marvin',
+    minScaleValue: 0,
+    maxScaleValue: 100,
+    filterStringBigins: 'invert(',
+    filterStringEnds: '%)'},
+  'effect-phobos': {
+    cssStyle: 'effects__preview--phobos',
+    minScaleValue: 0,
+    maxScaleValue: 3,
+    filterStringBigins: 'blur(',
+    filterStringEnds: 'px)'},
+  'effect-heat': {
+    cssStyle: 'effects__preview--heat',
+    minScaleValue: 1,
+    maxScaleValue: 3,
+    filterStringBigins: 'brightness(',
+    filterStringEnds: ')'}
+};
+
 var getRandomIntFromRange = function (min, max) {
   return (Math.round((Math.random() * (max - min))) + min);
 };
@@ -39,15 +80,15 @@ var getPictureUrl = function (number) {
 };
 var generatePost = function (count) {
   var post = {
+    url: getPictureUrl(count),
+    likes: getRandomIntFromRange(LIKES_PROPERTY.min, LIKES_PROPERTY.max),
+    DESCRIPTIONS: getRandomListElement(DESCRIPTIONS),
     comments: []
   };
-  post.url = getPictureUrl(count);
-  post.likes = getRandomIntFromRange(LIKES_PROPERTY.min, LIKES_PROPERTY.max);
   var commentsCount = getRandomIntFromRange(COMMENTS_PROPERTY.min, COMMENTS_PROPERTY.max);
   for (var i = 0; i < commentsCount; i++) {
     post.comments.push(getRandomListElement(COMMENTS));
   }
-  post.DESCRIPTIONS = getRandomListElement(DESCRIPTIONS);
   return post;
 };
 var generatePosts = function (count) {
@@ -104,6 +145,101 @@ var renderBigPicture = function (post) {
 var showPictures = function () {
   var posts = generatePosts(POST_COUNT);
   renderPreviewPage(posts);
-  renderBigPicture(posts[0]);
+//  renderBigPicture(posts[0]);
 };
 showPictures();
+
+
+var uploadForm = document.querySelector('#upload-file');
+var imgOverlay = document.querySelector('.img-upload__overlay');
+var imgUploadCancel = document.querySelector('.img-upload__cancel');
+var resizeControlPlus = document.querySelector('.resize__control--plus');
+var resizeControlMinus = document.querySelector('.resize__control--minus');
+var resizeControlInput = document.querySelector('.resize__control--value');
+var imgUploadPreview = document.querySelector('.img-upload__preview');
+var effectsList = document.querySelector('.effects__list');
+var scaleLineField = document.querySelector('.img-upload__scale');
+var scaleLine = document.querySelector('.scale__line');
+var scalePin = document.querySelector('.scale__pin');
+var scaleValue = document.querySelector('.scale__value');
+var currentStyle;
+var currentScaleHandler;
+
+var calculateNewNumber = function (number, change, min, max) {
+  var newNumber = number;
+  if (number + change <= max && number + change >= min) {
+    newNumber = number + change;
+  }
+  return newNumber;
+};
+
+var increaseImgScale = function () {
+  var newScale = calculateNewNumber(parseInt(resizeControlInput.value, 10), IMG_RESIZE_PROPERTY.step, IMG_RESIZE_PROPERTY.minScale, IMG_RESIZE_PROPERTY.maxScale);
+  imgUploadPreview.style.transform = 'scale(' + newScale / 100 + ')';
+  resizeControlInput.value = newScale + '%';
+};
+
+var reduceImgScale = function () {
+  var newScale = calculateNewNumber(parseInt(resizeControlInput.value, 10), -(IMG_RESIZE_PROPERTY.step), IMG_RESIZE_PROPERTY.minScale, IMG_RESIZE_PROPERTY.maxScale);
+  imgUploadPreview.style.transform = 'scale(' + newScale / 100 + ')';
+  resizeControlInput.value = newScale + '%';
+};
+
+var getPartOfScale = function (min, max, part) {
+  return part * (max - min) + min;
+};
+
+var changePictureEffect = function (evt) {
+  if (currentScaleHandler) {
+    scaleLine.removeEventListener('mouseup', currentScaleHandler);
+    imgUploadPreview.classList.remove(currentStyle);
+    scaleValue = DEFAULT_SCALE_VALUE;
+  }
+  if (evt.target.id === 'effect-none') {
+    scaleLineField.classList.add('hidden');
+    return;
+  }
+  var styleSet = IMAGE_STYLE_PROPERTY[evt.target.id];
+  currentStyle = styleSet.cssStyle;
+  scaleLineField.classList.remove('hidden');
+  imgUploadPreview.style.filter = '';
+  imgUploadPreview.classList.add(currentStyle);
+  currentScaleHandler = function (deepEvt) {
+    var numberForScale = getPartOfScale(styleSet.minScaleValue, styleSet.maxScaleValue, deepEvt.target.offsetLeft / scaleLine.clientWidth);
+    scaleValue.value = numberForScale;
+    imgUploadPreview.style.filter = styleSet.filterStringBigins + numberForScale + styleSet.filterStringEnds;
+  };
+  scalePin.addEventListener('mouseup', currentScaleHandler);
+};
+
+var openImgOverlay = function () {
+  scaleLineField.classList.add('hidden');
+  imgOverlay.classList.remove('hidden');
+  document.addEventListener('keydown', closeSetupByEsc);
+  imgUploadCancel.addEventListener('click', closeImgOverlay);
+  resizeControlMinus.addEventListener('click', reduceImgScale);
+  resizeControlPlus.addEventListener('click', increaseImgScale);
+  effectsList.addEventListener('change', changePictureEffect);
+};
+
+var closeImgOverlay = function () {
+  imgOverlay.classList.add('hidden');
+  uploadForm.value = '';
+  document.removeEventListener('keydown', closeSetupByEsc);
+  imgUploadCancel.removeEventListener('click', closeImgOverlay);
+  resizeControlMinus.removeEventListener('click', reduceImgScale);
+  resizeControlPlus.removeEventListener('click', increaseImgScale);
+  effectsList.removeEventListener('change', changePictureEffect);
+  scaleLine.removeEventListener('mouseup', currentScaleHandler);
+};
+
+var closeSetupByEsc = function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    closeImgOverlay();
+  }
+};
+
+uploadForm.addEventListener('change', function () {
+  openImgOverlay();
+});
+
