@@ -270,7 +270,6 @@ var applyImageStyle = function (styleId) {
 var openImgOverlay = function () {
   var checkedStyleId = document.querySelector('input[name="effect"]:checked').id;
   applyImageStyle(checkedStyleId);
-  scaleLineField.classList.add('hidden');
   imgOverlay.classList.remove('hidden');
   document.addEventListener('keydown', closeSetupByEsc);
   imgUploadCancel.addEventListener('click', closeImgOverlay);
