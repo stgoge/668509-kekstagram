@@ -157,7 +157,6 @@ var renderBigPicture = function (post) {
 };
 
 var bigPictureCloseByEsc = function (eve) {
-  debugger;
   if (eve.keyCode === ESC_KEYCODE) {
     bigPictureClose();
   }
@@ -167,7 +166,7 @@ var bigPictureCloseByEsc = function (eve) {
 var bigPictureClose = function () {
   bigPicture.classList.add('hidden');
   bigPictureCancel.removeEventListener('click', bigPictureClose);
-  document.removeEventListener('keydown', bigPictureCloseByEsc);
+  bigPictureCancel.removeEventListener('keydown', bigPictureCloseByEsc);
 
 };
 
