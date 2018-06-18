@@ -166,8 +166,7 @@ var bigPictureCloseByEsc = function (eve) {
 var bigPictureClose = function () {
   bigPicture.classList.add('hidden');
   bigPictureCancel.removeEventListener('click', bigPictureClose);
-  bigPictureCancel.removeEventListener('keydown', bigPictureCloseByEsc);
-
+  document.removeEventListener('keydown', bigPictureCloseByEsc);
 };
 
 var documentClickHandler = function (eve, posts) {
