@@ -237,24 +237,28 @@ var resetImageStyles = function () {
   imgUploadPreview.style.filter = '';
 };
 
+var addScalePinMouseDownHandler = function (styleId) {
+  scalePinMouseDownHandler = function (innerEvt) {
+    var styleSet = IMAGE_STYLE_PROPERTY[styleId];
+    innerEvt.preventDefault();
+    currentScaleMouseUpHandler = function (deepEvt) {
+      var filterNumericValue = getFilterNumericValue(styleSet.minScaleValue, styleSet.maxScaleValue, (deepEvt.target.offsetLeft / scaleLine.clientWidth));
+      scaleValueElement.value = filterNumericValue;
+      imgUploadPreview.style.filter = styleSet.filterStringBegins + filterNumericValue + styleSet.filterStringEnds;
+      document.removeEventListener('mouseup', currentScaleMouseUpHandler);
+    };
+    document.addEventListener('mouseup', currentScaleMouseUpHandler);
+  };
+  scalePin.addEventListener('mousedown', scalePinMouseDownHandler);
+};
+
 var changePictureEffect = function (evt) {
   if (scalePinMouseDownHandler) {
     scalePin.removeEventListener('mousedown', scalePinMouseDownHandler);
   }
   resetImageStyles();
   applyImageStyle(evt.target.id);
-  var styleSet = IMAGE_STYLE_PROPERTY[evt.target.id];
-  scalePinMouseDownHandler = function (innerEvt) {
-    innerEvt.preventDefault();
-    currentScaleMouseUpHandler = function (deepEvt) {
-      var FilterNumericValue = getFilterNumericValue(styleSet.minScaleValue, styleSet.maxScaleValue, (deepEvt.target.offsetLeft / scaleLine.clientWidth));
-      scaleValueElement.value = FilterNumericValue;
-      imgUploadPreview.style.filter = styleSet.filterStringBegins + FilterNumericValue + styleSet.filterStringEnds;
-      document.removeEventListener('mouseup', currentScaleMouseUpHandler);
-    };
-    document.addEventListener('mouseup', currentScaleMouseUpHandler);
-  };
-  scalePin.addEventListener('mousedown', scalePinMouseDownHandler);
+  addScalePinMouseDownHandler(evt.target.id);
 };
 
 var applyImageStyle = function (styleId) {
@@ -270,6 +274,7 @@ var applyImageStyle = function (styleId) {
 var openImgOverlay = function () {
   var checkedStyleId = document.querySelector('input[name="effect"]:checked').id;
   applyImageStyle(checkedStyleId);
+  addScalePinMouseDownHandler(checkedStyleId);
   imgOverlay.classList.remove('hidden');
   document.addEventListener('keydown', closeSetupByEsc);
   imgUploadCancel.addEventListener('click', closeImgOverlay);
