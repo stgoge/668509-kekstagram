@@ -147,15 +147,13 @@ var getBigPictureCancelElement = function () {
 
 var renderBigPicture = function (post) {
   var bigPicture = getBigPictureElement();
-  var bigPictureClone = bigPicture.cloneNode(true);
-  bigPictureClone.classList.remove('hidden');
-  bigPictureClone.querySelector('.big-picture__img img').src = post.url;
-  bigPictureClone.querySelector('.likes-count').textContent = post.likes;
-  bigPictureClone.querySelector('.comments-count').textContent = post.comments.length;
-  bigPictureClone.querySelector('.social__comments').innerHTML = '';
-  bigPictureClone.querySelector('.social__comments').appendChild(renderComments(post));
-  bigPictureClone.querySelector('.social__caption').textContent = post.descriptions;
-  bigPicture.parentNode.replaceChild(bigPictureClone, bigPicture);
+  bigPicture.querySelector('.big-picture__img img').src = post.url;
+  bigPicture.querySelector('.likes-count').textContent = post.likes;
+  bigPicture.querySelector('.comments-count').textContent = post.comments.length;
+  bigPicture.querySelector('.social__comments').innerHTML = '';
+  bigPicture.querySelector('.social__comments').appendChild(renderComments(post));
+  bigPicture.querySelector('.social__caption').textContent = post.descriptions;
+  bigPicture.classList.remove('hidden');
   document.querySelector('.social__comment-count').classList.add('visually-hidden');
   document.querySelector('.social__loadmore').classList.add('visually-hidden');
 };
@@ -192,7 +190,9 @@ var showPictures = function () {
   });
 };
 
-var uploadForm = document.querySelector('#upload-file');
+var imageUploadInput = document.querySelector('#upload-file');
+var imageUploadForm = document.querySelector('#upload-select-image');
+var imageUploadFormSubmit = document.querySelector('#upload-submit');
 var imgOverlay = document.querySelector('.img-upload__overlay');
 var imgUploadCancel = document.querySelector('.img-upload__cancel');
 var resizeControlPlus = document.querySelector('.resize__control--plus');
@@ -271,6 +271,41 @@ var applyImageStyle = function (styleId) {
   imgUploadPreview.classList.add(currentStyle);
 };
 
+var validateTags = function (tags) {
+  var tagsInList = tags.split(' ');
+  if (tagsInList.length > 5) {
+    return 'Не более 5 тегов!';
+  }
+  for (var i = 0; i < tagsInList.length; i++) {
+    if (tagsInList[i].charAt(0) !== '#') {
+      return 'Теги должны начинаться с #!';
+    } else if (tagsInList[i].length < 2) {
+      return 'В теге должен быть хотя бы один символ кроме #!';
+    } else if (tagsInList[i].length > 20) {
+      return 'В теге должно быть не более 20 символов включая #!';
+    } else if (tagsInList[i].indexOf('#', 1) > 1) {
+      return 'Теги нужно разделять пробелами!';
+    } else {
+      for (var j = i + 1; j < tagsInList.length; j++) {
+        if (tagsInList[i].toLowerCase() === tagsInList[i].toLowerCase()) {
+          return 'Теги должны быть уникальными!';
+        }
+      }
+    }
+  }
+  return '';
+};
+
+var imageUploadFormSubmitClickHandler = function (evt) {
+  evt.preventDefault();
+  var tagsElement = imageUploadForm.querySelector('.text__hashtags');
+  var imageDescription = imageUploadForm.querySelector('.text__description').value;
+  var tagsErrorText = validateTags(tagsElement.value);
+  if (tagsErrorText) {
+    tagsElement.setCustomValidity(tagsErrorText); // вот тут
+  }
+};
+
 var openImgOverlay = function () {
   var checkedStyleId = document.querySelector('input[name="effect"]:checked').id;
   applyImageStyle(checkedStyleId);
@@ -281,12 +316,13 @@ var openImgOverlay = function () {
   resizeControlMinus.addEventListener('click', reduceImgScale);
   resizeControlPlus.addEventListener('click', increaseImgScale);
   effectsList.addEventListener('change', changePictureEffect);
+  imageUploadFormSubmit.addEventListener('click', imageUploadFormSubmitClickHandler);
 };
 
 var closeImgOverlay = function () {
   resetImageStyles();
   imgOverlay.classList.add('hidden');
-  uploadForm.value = '';
+  imageUploadInput.value = '';
   document.removeEventListener('keydown', closeSetupByEsc);
   imgUploadCancel.removeEventListener('click', closeImgOverlay);
   resizeControlMinus.removeEventListener('click', reduceImgScale);
@@ -301,7 +337,7 @@ var closeSetupByEsc = function (evt) {
   }
 };
 
-uploadForm.addEventListener('change', function () {
+imageUploadInput.addEventListener('change', function () {
   openImgOverlay();
 });
 
