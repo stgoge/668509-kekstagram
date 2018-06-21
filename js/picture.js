@@ -192,7 +192,7 @@ var showPictures = function () {
 
 var imageUploadInput = document.querySelector('#upload-file');
 var imageUploadForm = document.querySelector('#upload-select-image');
-var imgOverlay = document.querySelector('.img-upload__overlay');
+var imageOverlay = document.querySelector('.img-upload__overlay');
 var imgUploadCancel = document.querySelector('.img-upload__cancel');
 var resizeControlPlus = document.querySelector('.resize__control--plus');
 var resizeControlMinus = document.querySelector('.resize__control--minus');
@@ -205,7 +205,7 @@ var scalePin = document.querySelector('.scale__pin');
 var scaleValueElement = document.querySelector('.scale__value');
 var previewContainer = document.querySelector('.pictures.container');
 var tagsElement = imageUploadForm.querySelector('.text__hashtags');
-var imageDescriptionElement = document.querySelector('.text__description');
+var description = document.querySelector('.text__description');
 var currentStyle;
 var currentScaleMouseUpHandler;
 
@@ -272,80 +272,90 @@ var applyImageStyle = function (styleId) {
   imgUploadPreview.classList.add(currentStyle);
 };
 
-var tagsElementInvalidHandler = function (evt) {
-  switch (true) {
-    case (evt.target.validity.tooShort): tagsElement.setCustomValidity('Минимальный тег - решетка и один символ.'); return;
-    case (evt.target.validity.patternMismatch): {
-      var tagsInList = evt.target.value.split(' ');
-      if (tagsInList.length > 5) {
-        tagsElement.setCustomValidity('Не более 5 тегов!');
+/*
+или так браузер и должен работать, или это какой-то баг:
+первую проверку делает только по нажатии ентера. далее - при вводе и не соответствии правилам - выводит правильные ошибки.
+далее, если привести внешний вид тегов в соответствие - снова не показывает ошибки пока не попытаешься отправить форму.
+например, последовательность вводов:
+"1" "ентер" - показывает ошибку
+добавляешь после этого "234" - обновляет ошибку на вводе каждого символа
+в начале строки пишешь "#" - ошибка исчазает
+вводишь в конце строки "#" без пробела (нарушение критерия длины тега) - ошибка снова не показывается пока не отправишь форму.
+*/
+var tagsElementInputHandler = function (evt) {
+  var tagsInList = evt.target.value.split(' ');
+  var errorMessage = '';
+  var reg = /^((#[A-Za-zА-Яа-я0-9_-]{1,19}\b)(?!.*\s\2\b))((\s#[A-Za-zА-Яа-я0-9_-]{1,19})(?!.*\4\b)){0,4}/i;
+  if ((evt.target.value.match(reg)) && (evt.target.value.match(reg)[0] === evt.target.value)) {
+    tagsElement.setCustomValidity('');
+    return;
+  } else {
+    for (var i = 0; i < tagsInList.length; i++) {
+      switch (true) {
+        case (tagsInList[i].charAt(0) !== '#'):
+          errorMessage = 'Теги нужно начинать с #!';
+          break;
+        case (tagsInList[i].length < 2):
+          errorMessage = 'В теге должен быть хотя бы один символ кроме #!';
+          break;
+        case (tagsInList[i].length > 20):
+          errorMessage = 'В теге должно быть не более 20 символов включая #!';
+          break;
+        case (tagsInList[i].indexOf('#', 1) > 1):
+          errorMessage = 'Теги нужно разделять пробелами!';
+          break;
+      }
+      if (errorMessage) {
+        tagsElement.setCustomValidity(errorMessage);
         return;
       }
-      for (var i = 0; i < tagsInList.length; i++) {
-        switch (true) {
-          case (tagsInList[i].charAt(0) !== '#'): tagsElement.setCustomValidity('Теги нужно начинать с #!'); return;
-          case (tagsInList[i].length < 2) : tagsElement.setCustomValidity('В теге должен быть хотя бы один символ кроме #!'); return;
-          case (tagsInList[i].length > 20) : tagsElement.setCustomValidity('В теге должно быть не более 20 символов включая #!'); return;
-          case (tagsInList[i].indexOf('#', 1) > 1) : tagsElement.setCustomValidity('Теги нужно разделять пробелами!'); return;
-        }
-      }
     }
+    if (i > 5) {
+      tagsElement.setCustomValidity('Не более 5 тегов!');
+      return;
+    }
+    tagsElement.setCustomValidity('Теги должны быть уникальными!');
   }
 };
 
-var checkTagsElementUnique = function (evt) {
-  var tagsInList = evt.target.value.split(' ');
-  for (var i = 0; i < tagsInList.length; i++) {
-    for (var j = i + 1; j < tagsInList.length; j++) {
-      if (tagsInList[i].toLowerCase() === tagsInList[j].toLowerCase()) {
-        return 'Теги должны быть уникальными!';
-      }
-    }
-  }
-  return '';
-};
-
-
-var tagsElementInputHandler = function (evt) {
-  tagsElement.setCustomValidity(checkTagsElementUnique(evt));
-};
-
-var openImgOverlay = function () {
+var openImageOverlay = function () {
   var checkedStyleId = document.querySelector('input[name="effect"]:checked').id;
   applyImageStyle(checkedStyleId);
   addScalePinMouseDownHandler(checkedStyleId);
-  imgOverlay.classList.remove('hidden');
+  imageOverlay.classList.remove('hidden');
   document.addEventListener('keydown', closeSetupByEsc);
-  imgUploadCancel.addEventListener('click', closeImgOverlay);
+  imgUploadCancel.addEventListener('click', closeImageOverlay);
   resizeControlMinus.addEventListener('click', reduceImgScale);
   resizeControlPlus.addEventListener('click', increaseImgScale);
   effectsList.addEventListener('change', changePictureEffect);
-  tagsElement.addEventListener('invalid', tagsElementInvalidHandler);
   tagsElement.addEventListener('input', tagsElementInputHandler);
 };
 
-var closeImgOverlay = function () {
+var closeImageOverlay = function () {
   resetImageStyles();
-  imgOverlay.classList.add('hidden');
+  imageOverlay.classList.add('hidden');
   imageUploadInput.value = '';
   document.removeEventListener('keydown', closeSetupByEsc);
-  imgUploadCancel.removeEventListener('click', closeImgOverlay);
+  imgUploadCancel.removeEventListener('click', closeImageOverlay);
   resizeControlMinus.removeEventListener('click', reduceImgScale);
   resizeControlPlus.removeEventListener('click', increaseImgScale);
   effectsList.removeEventListener('change', changePictureEffect);
   scalePin.removeEventListener('mousedown', scalePinMouseDownHandler);
-  tagsElement.removeEventListener('invalid', tagsElementInvalidHandler);
   tagsElement.removeEventListener('input', tagsElementInputHandler);
 };
 
+var checkEscExceptions = function (evt) {
+  return (evt.keyCode === ESC_KEYCODE && evt.target !== tagsElement && evt.target !== description);
+};
+
 var closeSetupByEsc = function (evt) {
-  if (evt.keyCode === ESC_KEYCODE && evt.target !== tagsElement && evt.target !== imageDescriptionElement) {
-    closeImgOverlay();
+  if (checkEscExceptions(evt)) {
+    closeImageOverlay();
   }
 };
 
 imageUploadInput.addEventListener('change', function () {
-  openImgOverlay();
+  openImageOverlay();
 });
 
 showPictures();
