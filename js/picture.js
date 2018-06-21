@@ -192,7 +192,6 @@ var showPictures = function () {
 
 var imageUploadInput = document.querySelector('#upload-file');
 var imageUploadForm = document.querySelector('#upload-select-image');
-var imageUploadFormSubmit = document.querySelector('#upload-submit');
 var imgOverlay = document.querySelector('.img-upload__overlay');
 var imgUploadCancel = document.querySelector('.img-upload__cancel');
 var resizeControlPlus = document.querySelector('.resize__control--plus');
@@ -205,6 +204,8 @@ var scaleLine = document.querySelector('.scale__line');
 var scalePin = document.querySelector('.scale__pin');
 var scaleValueElement = document.querySelector('.scale__value');
 var previewContainer = document.querySelector('.pictures.container');
+var tagsElement = imageUploadForm.querySelector('.text__hashtags');
+var imageDescriptionElement = document.querySelector('.text__description');
 var currentStyle;
 var currentScaleMouseUpHandler;
 
@@ -271,39 +272,42 @@ var applyImageStyle = function (styleId) {
   imgUploadPreview.classList.add(currentStyle);
 };
 
-var validateTags = function (tags) {
-  var tagsInList = tags.split(' ');
-  if (tagsInList.length > 5) {
-    return 'Не более 5 тегов!';
-  }
-  for (var i = 0; i < tagsInList.length; i++) {
-    if (tagsInList[i].charAt(0) !== '#') {
-      return 'Теги должны начинаться с #!';
-    } else if (tagsInList[i].length < 2) {
-      return 'В теге должен быть хотя бы один символ кроме #!';
-    } else if (tagsInList[i].length > 20) {
-      return 'В теге должно быть не более 20 символов включая #!';
-    } else if (tagsInList[i].indexOf('#', 1) > 1) {
-      return 'Теги нужно разделять пробелами!';
-    } else {
-      for (var j = i + 1; j < tagsInList.length; j++) {
-        if (tagsInList[i].toLowerCase() === tagsInList[i].toLowerCase()) {
-          return 'Теги должны быть уникальными!';
+var tagsElementInvalidHandler = function (evt) {
+  switch (true) {
+    case (evt.target.validity.tooShort): tagsElement.setCustomValidity('Минимальный тег - решетка и один символ.'); return;
+    case (evt.target.validity.patternMismatch): {
+      var tagsInList = evt.target.value.split(' ');
+      if (tagsInList.length > 5) {
+        tagsElement.setCustomValidity('Не более 5 тегов!');
+        return;
+      }
+      for (var i = 0; i < tagsInList.length; i++) {
+        switch (true) {
+          case (tagsInList[i].charAt(0) !== '#'): tagsElement.setCustomValidity('Теги нужно начинать с #!'); return;
+          case (tagsInList[i].length < 2) : tagsElement.setCustomValidity('В теге должен быть хотя бы один символ кроме #!'); return;
+          case (tagsInList[i].length > 20) : tagsElement.setCustomValidity('В теге должно быть не более 20 символов включая #!'); return;
+          case (tagsInList[i].indexOf('#', 1) > 1) : tagsElement.setCustomValidity('Теги нужно разделять пробелами!'); return;
         }
+      }
+    }
+  }
+};
+
+var checkTagsElementUnique = function (evt) {
+  var tagsInList = evt.target.value.split(' ');
+  for (var i = 0; i < tagsInList.length; i++) {
+    for (var j = i + 1; j < tagsInList.length; j++) {
+      if (tagsInList[i].toLowerCase() === tagsInList[j].toLowerCase()) {
+        return 'Теги должны быть уникальными!';
       }
     }
   }
   return '';
 };
 
-var imageUploadFormSubmitClickHandler = function (evt) {
-  evt.preventDefault();
-  var tagsElement = imageUploadForm.querySelector('.text__hashtags');
-  var imageDescription = imageUploadForm.querySelector('.text__description').value;
-  var tagsErrorText = validateTags(tagsElement.value);
-  if (tagsErrorText) {
-    tagsElement.setCustomValidity(tagsErrorText); // вот тут
-  }
+
+var tagsElementInputHandler = function (evt) {
+  tagsElement.setCustomValidity(checkTagsElementUnique(evt));
 };
 
 var openImgOverlay = function () {
@@ -316,7 +320,8 @@ var openImgOverlay = function () {
   resizeControlMinus.addEventListener('click', reduceImgScale);
   resizeControlPlus.addEventListener('click', increaseImgScale);
   effectsList.addEventListener('change', changePictureEffect);
-  imageUploadFormSubmit.addEventListener('click', imageUploadFormSubmitClickHandler);
+  tagsElement.addEventListener('invalid', tagsElementInvalidHandler);
+  tagsElement.addEventListener('input', tagsElementInputHandler);
 };
 
 var closeImgOverlay = function () {
@@ -329,10 +334,12 @@ var closeImgOverlay = function () {
   resizeControlPlus.removeEventListener('click', increaseImgScale);
   effectsList.removeEventListener('change', changePictureEffect);
   scalePin.removeEventListener('mousedown', scalePinMouseDownHandler);
+  tagsElement.removeEventListener('invalid', tagsElementInvalidHandler);
+  tagsElement.removeEventListener('input', tagsElementInputHandler);
 };
 
 var closeSetupByEsc = function (evt) {
-  if (evt.keyCode === ESC_KEYCODE) {
+  if (evt.keyCode === ESC_KEYCODE && evt.target !== tagsElement && evt.target !== imageDescriptionElement) {
     closeImgOverlay();
   }
 };
