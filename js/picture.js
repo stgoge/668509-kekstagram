@@ -68,6 +68,8 @@ var IMAGE_STYLE_PROPERTY = {
     filterStringEnds: ')'}
 };
 
+var fragment = document.createDocumentFragment();
+
 var getRandomIntFromRange = function (min, max) {
   return (Math.round((Math.random() * (max - min))) + min);
 };
@@ -119,18 +121,16 @@ var renderComment = function (path, text) {
 };
 
 var renderComments = function (post) {
-  var comments = document.createDocumentFragment();
   var commentUrl;
   for (var i = 0; i < post.comments.length; i++) {
     commentUrl = 'img/avatar-' + getRandomIntFromRange(1, 6) + '.svg';
-    comments.appendChild(renderComment(commentUrl, post.comments[i]));
+    fragment.appendChild(renderComment(commentUrl, post.comments[i]));
   }
-  return comments;
+  return fragment;
 };
 
 var renderPreviewPage = function (posts) {
   var previewPage = document.querySelector('.pictures');
-  var fragment = document.createDocumentFragment();
   for (var i = 0; i < POST_COUNT; i++) {
     fragment.appendChild(renderPostPreview(posts[i]));
   }
