@@ -272,52 +272,43 @@ var applyImageStyle = function (styleId) {
   imgUploadPreview.classList.add(currentStyle);
 };
 
-/*
-или так браузер и должен работать, или это какой-то баг:
-первую проверку делает только по нажатии ентера. далее - при вводе и не соответствии правилам - выводит правильные ошибки.
-далее, если привести внешний вид тегов в соответствие - снова не показывает ошибки пока не попытаешься отправить форму.
-например, последовательность вводов:
-"1" "ентер" - показывает ошибку
-добавляешь после этого "234" - обновляет ошибку на вводе каждого символа
-в начале строки пишешь "#" - ошибка исчазает
-вводишь в конце строки "#" без пробела (нарушение критерия длины тега) - ошибка снова не показывается пока не отправишь форму.
-*/
 var tagsElementInputHandler = function (evt) {
+  var tagsCount = 0;
   var tagsInList = evt.target.value.split(' ');
-  var errorMessage = '';
-  var reg = /^((#[A-Za-zА-Яа-я0-9_-]{1,19}\b)(?!.*\s\2\b))((\s#[A-Za-zА-Яа-я0-9_-]{1,19})(?!.*\4\b)){0,4}/i;
-  if ((evt.target.value.match(reg)) && (evt.target.value.match(reg)[0] === evt.target.value)) {
-    tagsElement.setCustomValidity('');
-    return;
-  } else {
-    for (var i = 0; i < tagsInList.length; i++) {
-      switch (true) {
-        case (tagsInList[i].charAt(0) !== '#'):
-          errorMessage = 'Теги нужно начинать с #!';
-          break;
-        case (tagsInList[i].length < 2):
-          errorMessage = 'В теге должен быть хотя бы один символ кроме #!';
-          break;
-        case (tagsInList[i].length > 20):
-          errorMessage = 'В теге должно быть не более 20 символов включая #!';
-          break;
-        case (tagsInList[i].indexOf('#', 1) > 1):
-          errorMessage = 'Теги нужно разделять пробелами!';
-          break;
-      }
-      if (errorMessage) {
-        tagsElement.setCustomValidity(errorMessage);
+  for (var i = 0; i < tagsInList.length; i++) {
+    if (tagsInList[i] === '') { // игнор множественных пробелов между тегами и после
+      continue;
+    }
+    tagsCount++;
+    if (tagsInList[i].charAt(0) !== '#') {
+      tagsElement.setCustomValidity('Теги должны начинаться с #!');
+      return;
+    }
+    if (tagsInList[i].length < 2) {
+      tagsElement.setCustomValidity('В теге должен быть хотя бы один символ кроме #!');
+      return;
+    }
+    if (tagsInList[i].length > 20) {
+      tagsElement.setCustomValidity('В теге должно быть не более 20 символов включая #!');
+      return;
+    }
+    if (tagsInList[i].indexOf('#', 1) > 1) {
+      tagsElement.setCustomValidity('Теги нужно разделять пробелами!');
+      return;
+    }
+    for (var j = i + 1; j < tagsInList.length; j++) {
+      if (tagsInList[i].toLowerCase() === tagsInList[j].toLowerCase()) {
+        tagsElement.setCustomValidity('Теги должны быть уникальными!');
         return;
       }
     }
-    if (i > 5) {
-      tagsElement.setCustomValidity('Не более 5 тегов!');
-      return;
-    }
-    tagsElement.setCustomValidity('Теги должны быть уникальными!');
   }
+  if (tagsCount > 5) {
+    tagsElement.setCustomValidity('Не более 5 тегов!');
+    return;
+  }
+  tagsElement.setCustomValidity('');
 };
-
 var openImageOverlay = function () {
   var checkedStyleId = document.querySelector('input[name="effect"]:checked').id;
   applyImageStyle(checkedStyleId);
@@ -345,11 +336,11 @@ var closeImageOverlay = function () {
 };
 
 var checkEscExceptions = function (evt) {
-  return (evt.keyCode === ESC_KEYCODE && evt.target !== tagsElement && evt.target !== description);
+  return (evt.target !== tagsElement && evt.target !== description);
 };
 
 var closeSetupByEsc = function (evt) {
-  if (checkEscExceptions(evt)) {
+  if (evt.keyCode === ESC_KEYCODE && checkEscExceptions(evt)) {
     closeImageOverlay();
   }
 };
