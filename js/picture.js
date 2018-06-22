@@ -273,14 +273,9 @@ var applyImageStyle = function (styleId) {
 };
 
 var tagsElementInputHandler = function (evt) {
-  var tagsCount = 0;
   var tagsInList = evt.target.value.split(' ');
   for (var i = 0; i < tagsInList.length; i++) {
-    if (tagsInList[i] === '') { // игнор множественных пробелов между тегами и после
-      continue;
-    }
-    tagsCount++;
-    if (tagsInList[i].charAt(0) !== '#') {
+    if ((tagsInList[i].charAt(0) !== '#') || (tagsInList[i] === '')) {
       tagsElement.setCustomValidity('Теги должны начинаться с #!');
       return;
     }
@@ -303,7 +298,7 @@ var tagsElementInputHandler = function (evt) {
       }
     }
   }
-  if (tagsCount > 5) {
+  if (tagsInList.length > 5) {
     tagsElement.setCustomValidity('Не более 5 тегов!');
     return;
   }
