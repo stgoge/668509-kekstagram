@@ -272,38 +272,37 @@ var applyImageStyle = function (styleId) {
   imgUploadPreview.classList.add(currentStyle);
 };
 
-var tagsElementInputHandler = function (evt) {
-  var tagsInList = evt.target.value.split(' ');
-  for (var i = 0; i < tagsInList.length; i++) {
-    if ((tagsInList[i].charAt(0) !== '#') || (tagsInList[i] === '')) {
-      tagsElement.setCustomValidity('Теги должны начинаться с #!');
-      return;
+var checkTagsValidity = function (tags) {
+  for (var i = 0; i < tags.length; i++) {
+    if ((tags[i].charAt(0) !== '#') || (tags[i] === '')) {
+      return 'Теги должны начинаться с #!';
     }
-    if (tagsInList[i].length < 2) {
-      tagsElement.setCustomValidity('В теге должен быть хотя бы один символ кроме #!');
-      return;
+    if (tags[i].length < 2) {
+      return 'В теге должен быть хотя бы один символ кроме #!';
     }
-    if (tagsInList[i].length > 20) {
-      tagsElement.setCustomValidity('В теге должно быть не более 20 символов включая #!');
-      return;
+    if (tags[i].length > 20) {
+      return 'В теге должно быть не более 20 символов включая #!';
     }
-    if (tagsInList[i].indexOf('#', 1) > 1) {
-      tagsElement.setCustomValidity('Теги нужно разделять пробелами!');
-      return;
+    if (tags[i].indexOf('#', 1) > 1) {
+      return 'Теги нужно разделять пробелами!';
     }
-    for (var j = i + 1; j < tagsInList.length; j++) {
-      if (tagsInList[i].toLowerCase() === tagsInList[j].toLowerCase()) {
-        tagsElement.setCustomValidity('Теги должны быть уникальными!');
-        return;
+    for (var j = i + 1; j < tags.length; j++) {
+      if (tags[i].toLowerCase() === tags[j].toLowerCase()) {
+        return 'Теги должны быть уникальными!';
       }
     }
   }
-  if (tagsInList.length > 5) {
-    tagsElement.setCustomValidity('Не более 5 тегов!');
-    return;
+  if (tags.length > 5) {
+    return 'Не более 5 тегов!';
   }
-  tagsElement.setCustomValidity('');
+  return '';
 };
+
+var tagsElementInputHandler = function (evt) {
+  var tags = evt.target.value.split(' ');
+  tagsElement.setCustomValidity(checkTagsValidity(tags));
+};
+
 var openImageOverlay = function () {
   var checkedStyleId = document.querySelector('input[name="effect"]:checked').id;
   applyImageStyle(checkedStyleId);
