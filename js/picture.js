@@ -202,12 +202,14 @@ var effectsList = document.querySelector('.effects__list');
 var scaleLineField = document.querySelector('.img-upload__scale');
 var scaleLine = document.querySelector('.scale__line');
 var scalePin = document.querySelector('.scale__pin');
-var scaleValueElement = document.querySelector('.scale__value');
+var scaleValueElement = document.querySelector('input[name="effect-level"]');
 var previewContainer = document.querySelector('.pictures.container');
 var tagsElement = imageUploadForm.querySelector('.text__hashtags');
 var description = document.querySelector('.text__description');
+var scaleLevelElement = document.querySelector('.scale__level');
 var currentStyle;
-var currentScaleMouseUpHandler;
+var scalePinMouseDownHandler;
+var scalePinLeftOffset;
 
 var calculateNewScale = function (number, isPlus) {
   var newNumber = (isPlus) ? Math.min(number + IMG_RESIZE_PROPERTY.step, IMG_RESIZE_PROPERTY.maxScale) : Math.max(number - IMG_RESIZE_PROPERTY.step, IMG_RESIZE_PROPERTY.minScale);
@@ -226,29 +228,65 @@ var reduceImgScale = function () {
   resizeControlInput.value = newScale + '%';
 };
 
-var getFilterNumericValue = function (min, max, part) {
+var getNumericFilterValue = function (min, max, part) {
   return (part * (max - min) + min);
 };
-
-var scalePinMouseDownHandler;
 
 var resetImageStyles = function () {
   imgUploadPreview.classList.remove(currentStyle);
   scaleValueElement.value = DEFAULT_SCALE_VALUE;
   imgUploadPreview.style.filter = '';
+  scalePin.style.left = scalePinLeftOffset + 'px';
+};
+
+var renderScalePin = function (scaleValue) {
+  scalePin.style.left = scaleValue + '%';
+  scaleLevelElement.style.width = scaleValue + '%';
+};
+
+var applyFilter = function (scalePercentValue, styleId) {
+  var styleSet = IMAGE_STYLE_PROPERTY[styleId];
+  var numericFilterValue = getNumericFilterValue(styleSet.minScaleValue, styleSet.maxScaleValue, scalePercentValue / 100);
+  imgUploadPreview.style.filter = styleSet.filterStringBegins + numericFilterValue + styleSet.filterStringEnds;
+};
+
+var applyScaleInputValue = function (scalePercentValue) {
+  scaleValueElement.value = Math.round(scalePercentValue);
+};
+
+var applyScaleChange = function (scalePercentValue, styleId) {
+  renderScalePin(scalePercentValue);
+  applyFilter(scalePercentValue, styleId);
+  applyScaleInputValue(scalePercentValue);
 };
 
 var addScalePinMouseDownHandler = function (styleId) {
+  var maxValue = scaleLine.clientWidth;
+  var scaleValue = scalePin.offsetLeft;
+
   scalePinMouseDownHandler = function (innerEvt) {
-    var styleSet = IMAGE_STYLE_PROPERTY[styleId];
     innerEvt.preventDefault();
-    currentScaleMouseUpHandler = function (deepEvt) {
-      var filterNumericValue = getFilterNumericValue(styleSet.minScaleValue, styleSet.maxScaleValue, (deepEvt.target.offsetLeft / scaleLine.clientWidth));
-      scaleValueElement.value = filterNumericValue;
-      imgUploadPreview.style.filter = styleSet.filterStringBegins + filterNumericValue + styleSet.filterStringEnds;
-      document.removeEventListener('mouseup', currentScaleMouseUpHandler);
+    var startPinCoord = innerEvt.clientX;
+
+
+    var scalePinMouseMoveHandler = function (moveEvt) {
+      moveEvt.preventDefault();
+      var shift = moveEvt.clientX - startPinCoord;
+      startPinCoord = moveEvt.clientX;
+      if (((scaleValue + shift) <= maxValue) && ((scaleValue + shift) >= 0)) {
+        scaleValue += shift;
+        applyScaleChange(scaleValue / maxValue * 100, styleId);
+      }
     };
+
+    var currentScaleMouseUpHandler = function (mouseUpEvt) {
+      mouseUpEvt.preventDefault();
+      document.removeEventListener('mouseup', currentScaleMouseUpHandler);
+      document.removeEventListener('mousemove', scalePinMouseMoveHandler);
+    };
+
     document.addEventListener('mouseup', currentScaleMouseUpHandler);
+    document.addEventListener('mousemove', scalePinMouseMoveHandler);
   };
   scalePin.addEventListener('mousedown', scalePinMouseDownHandler);
 };
@@ -267,6 +305,7 @@ var applyImageStyle = function (styleId) {
     scaleLineField.classList.add('hidden');
     return;
   }
+  applyScaleChange(DEFAULT_SCALE_VALUE, styleId);
   scaleLineField.classList.remove('hidden');
   currentStyle = IMAGE_STYLE_PROPERTY[styleId].cssStyle;
   imgUploadPreview.classList.add(currentStyle);
@@ -306,8 +345,8 @@ var tagsElementInputHandler = function (evt) {
 var openImageOverlay = function () {
   var checkedStyleId = document.querySelector('input[name="effect"]:checked').id;
   applyImageStyle(checkedStyleId);
-  addScalePinMouseDownHandler(checkedStyleId);
   imageOverlay.classList.remove('hidden');
+  addScalePinMouseDownHandler(checkedStyleId);
   document.addEventListener('keydown', closeSetupByEsc);
   imgUploadCancel.addEventListener('click', closeImageOverlay);
   resizeControlMinus.addEventListener('click', reduceImgScale);
