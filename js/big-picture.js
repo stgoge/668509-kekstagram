@@ -1,16 +1,9 @@
 'use strict';
 (function () {
-  var fragment = document.createDocumentFragment();
   var bigPicture = document.querySelector('.big-picture');
-
-  var renderPostInGallery = function (post) {
-    var renderedPost = document.querySelector('#picture').content.querySelector('.picture__link').cloneNode(true);
-    renderedPost.querySelector('.picture__img').src = post.url;
-    renderedPost.querySelector('.picture__img').id = post.id;
-    renderedPost.querySelector('.picture__stat--likes').textContent = post.likes;
-    renderedPost.querySelector('.picture__stat--comments').textContent = post.comments.length;
-    return renderedPost;
-  };
+  var fragment = document.createDocumentFragment();
+  var bigPictureCancel = document.querySelector('.big-picture__cancel');
+  var ESC_KEYCODE = 27;
 
   var renderComment = function (path, text) {
     var renderedComment = document.querySelector('#comment').content.querySelector('.social__comment').cloneNode(true);
@@ -26,14 +19,6 @@
       fragment.appendChild(renderComment(avatar, post.comments[i]));
     }
     return fragment;
-  };
-
-  var renderGallery = function (posts) {
-    var previewPage = document.querySelector('.pictures');
-    for (var i = 0; i < posts.length; i++) {
-      fragment.appendChild(renderPostInGallery(posts[i]));
-    }
-    previewPage.appendChild(fragment);
   };
 
   var renderBigPicture = function (post) {
@@ -52,9 +37,39 @@
     bigPicture.classList.add('hidden');
   };
 
-  window.render = {
-    renderBigPicture: renderBigPicture,
-    closeBigPicture: closeBigPicture,
-    renderGallery: renderGallery
+
+  var bigPictureCloseByEsc = function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      bigPictureClose();
+    }
+  };
+
+  var getPictureIdFromPreview = function (evt) {
+    return (parseInt(evt.target.id, 10) - 1);
+  };
+
+  var previewContainerClickHandler = function (evt, posts) {
+    if (evt.target.classList.contains('picture__img')) {
+      renderBigPicture(posts[getPictureIdFromPreview(evt)]);
+      bigPictureCancel.addEventListener('click', bigPictureClose);
+      document.addEventListener('keydown', bigPictureCloseByEsc);
+    }
+  };
+
+  var picturesContainerClickHandler = function (posts) {
+    document.querySelector('.pictures.container').addEventListener('click', function (evt) {
+      previewContainerClickHandler(evt, posts);
+    });
+  };
+
+  var bigPictureClose = function () {
+    closeBigPicture();
+    bigPictureCancel.removeEventListener('click', bigPictureClose);
+    document.removeEventListener('keydown', bigPictureCloseByEsc);
+  };
+
+  window.bigPicture = {
+    render: renderBigPicture,
+    addHandler: picturesContainerClickHandler
   };
 })();

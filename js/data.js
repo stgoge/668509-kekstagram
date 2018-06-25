@@ -56,6 +56,6 @@
   };
 
   window.data = {
-    generatePosts: generatePosts
+    generate: generatePosts
   };
 })();
