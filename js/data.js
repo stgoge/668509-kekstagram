@@ -28,6 +28,11 @@
     min: 15,
     max: 200
   };
+  var POST_COUNT = 25;
+
+  var getRandomIntFromRange = function (min, max) {
+    return (Math.round((Math.random() * (max - min))) + min);
+  };
 
   var getPictureUrl = function (number) {
     return IMG_PROPERTY.path + number + IMG_PROPERTY.extension;
@@ -36,11 +41,11 @@
   var generatePost = function (count) {
     var post = {
       url: getPictureUrl(count),
-      likes: window.util.getRandomIntFromRange(LIKES_PROPERTY.min, LIKES_PROPERTY.max),
+      likes: getRandomIntFromRange(LIKES_PROPERTY.min, LIKES_PROPERTY.max),
       description: window.util.getRandomListElement(DESCRIPTIONS),
       comments: [],
       id: count + '__preview'};
-    var commentsCount = window.util.getRandomIntFromRange(COMMENTS_PROPERTY.min, COMMENTS_PROPERTY.max);
+    var commentsCount = getRandomIntFromRange(COMMENTS_PROPERTY.min, COMMENTS_PROPERTY.max);
     for (var i = 0; i < commentsCount; i++) {
       post.comments.push(window.util.getRandomListElement(COMMENTS));
     }
@@ -55,7 +60,9 @@
     return posts;
   };
 
+  var posts = generatePosts(POST_COUNT);
+
   window.data = {
-    generate: generatePosts
+    posts: posts
   };
 })();

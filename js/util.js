@@ -8,13 +8,8 @@
     return list[getRandomIntFromRange(0, list.length - 1)];
   };
 
-  var getPartOfRange = function (min, max, part) {
-    return (part * (max - min) / 100 + min);
-  };
-
   window.util = {
     getRandomIntFromRange: getRandomIntFromRange,
-    getRandomListElement: getRandomListElement,
-    getPartOfRange: getPartOfRange
+    getRandomListElement: getRandomListElement
   };
 })();

@@ -61,6 +61,10 @@
   var scalePinMouseDownHandler;
   var currentStyle;
 
+  var getPartOfRange = function (min, max, part) {
+    return (part * (max - min) / 100 + min);
+  };
+
   var calculateNewImageSize = function (size, factor) {
     return Math.max(IMAGE_RESIZE_PROPERTY.minSize, Math.min(size + IMAGE_RESIZE_PROPERTY.step * factor, IMAGE_RESIZE_PROPERTY.maxSize));
   };
@@ -95,7 +99,7 @@
 
   var generateFilterString = function (scalePercentValue, styleName) {
     var style = IMAGE_STYLE_PROPERTY[styleName];
-    var numericFilterValue = window.util.getPartOfRange(style.minFilterValue, style.maxFilterValue, scalePercentValue);
+    var numericFilterValue = getPartOfRange(style.minFilterValue, style.maxFilterValue, scalePercentValue);
     return style.filterStringBegins + numericFilterValue + style.filterStringEnds;
   };
 
@@ -182,10 +186,6 @@
     scalePin.addEventListener('mousedown', scalePinMouseDownHandler);
   };
 
-  var tagsElementInputHandler = function (evt) {
-    tagsElement.setCustomValidity(window.checkForm.checkTagsValidity(evt));
-  };
-
   var resizeControlMinusClickHandler = function () {
     transformImageSize(-1);
   };
@@ -202,7 +202,7 @@
     resizeControlMinus.addEventListener('click', resizeControlMinusClickHandler);
     resizeControlPlus.addEventListener('click', resizeControlPlusClickHandler);
     effectsList.addEventListener('change', changeFilter);
-    tagsElement.addEventListener('input', tagsElementInputHandler);
+    window.form.addHandler();
   };
 
   var closeImageOverlay = function () {
@@ -213,11 +213,7 @@
     resizeControlPlus.removeEventListener('click', resizeControlPlusClickHandler);
     effectsList.removeEventListener('change', changeFilter);
     scalePin.removeEventListener('mousedown', scalePinMouseDownHandler);
-    tagsElement.removeEventListener('input', tagsElementInputHandler);
-  };
-
-  var checkEscExceptions = function (evt) {
-    return (evt.target !== tagsElement && evt.target !== description);
+    window.form.removeHandler();
   };
 
   var closeSetupByEsc = function (evt) {
@@ -226,13 +222,11 @@
     }
   };
 
-  var imageUploadInputChangeHandler = function () {
-    imageUploadInput.addEventListener('change', function () {
-      openImageOverlay();
-    });
+  var checkEscExceptions = function (evt) {
+    return (evt.target !== tagsElement && evt.target !== description);
   };
 
-  window.uploadSetup = {
-    addHandler: imageUploadInputChangeHandler
-  };
+  imageUploadInput.addEventListener('change', function () {
+    openImageOverlay();
+  });
 })();

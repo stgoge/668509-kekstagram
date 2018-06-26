@@ -1,5 +1,20 @@
 'use strict';
 (function () {
+  var tagsElement = document.querySelector('.text__hashtags');
+
+
+  var tagsElementInputHandler = function (evt) {
+    tagsElement.setCustomValidity(checkTagsValidity(evt));
+  };
+
+  var addTagsElementInputHandler = function () {
+    tagsElement.addEventListener('input', tagsElementInputHandler);
+  };
+
+  var removeTagsElementInputHandler = function () {
+    tagsElement.removeEventListener('input', tagsElementInputHandler);
+  };
+
   var checkTagsValidity = function (evt) {
     var tags = evt.target.value.split(' ');
     for (var i = 0; i < tags.length; i++) {
@@ -27,7 +42,8 @@
     return '';
   };
 
-  window.checkForm = {
-    checkTagsValidity: checkTagsValidity
+  window.form = {
+    addHandler: addTagsElementInputHandler,
+    removeHandler: removeTagsElementInputHandler
   };
 })();

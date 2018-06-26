@@ -56,20 +56,14 @@
     }
   };
 
-  var picturesContainerClickHandler = function (posts) {
-    document.querySelector('.pictures.container').addEventListener('click', function (evt) {
-      previewContainerClickHandler(evt, posts);
-    });
-  };
-
   var bigPictureClose = function () {
     closeBigPicture();
     bigPictureCancel.removeEventListener('click', bigPictureClose);
     document.removeEventListener('keydown', bigPictureCloseByEsc);
   };
 
-  window.bigPicture = {
-    render: renderBigPicture,
-    addHandler: picturesContainerClickHandler
-  };
+  document.querySelector('.pictures').addEventListener('click', function (evt) {
+    previewContainerClickHandler(evt, window.data.posts);
+  });
+
 })();

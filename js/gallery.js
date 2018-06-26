@@ -18,7 +18,6 @@
     previewPage.appendChild(fragment);
   };
 
-  window.gallery = {
-    render: renderGallery
-  };
+  renderGallery(window.data.posts);
+
 })();
