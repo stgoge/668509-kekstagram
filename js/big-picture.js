@@ -45,7 +45,7 @@
   };
 
   var getPictureIdFromPreview = function (evt) {
-    return (parseInt(evt.target.id, 10) - 1);
+    return parseInt(evt.target.id, 10);
   };
 
   var previewContainerClickHandler = function (evt, posts) {
