@@ -1278,3 +1278,49 @@ main {
     grid-row: 1 / span 3;
   }
 }
+
+/* Модальное */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.5)
+}
+
+.modal__content {
+  color: black;
+  position: absolute;
+  width: 400px;
+  height: 100px;
+  text-align: center;
+  vertical-align: middle;
+  top: 50%;
+  left:50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+}
+.modal__message {
+  font-size: 15px;
+  line-height: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.modal__close {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  top: 0px;
+  left: 380px;
+}
+
+.modal__close:hover,
+.modal__close:focus {
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.modal__close:active {
+  border: 1px solid blue;
+}

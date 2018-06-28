@@ -157,7 +157,12 @@
         <button type="reset" class="big-picture__cancel cancel" id="picture-cancel">Закрыть</button>
       </div>
     </section>
-
+  <div class="modal hidden" style="z-index: 2">
+      <div class="modal__content">
+          <div class="modal__message">какое то сообщение</div>
+          <div class="modal__close" tabindex="0">X</div>
+      </div>
+  </div>
   </main>
 
   <footer class="page-footer container">
@@ -190,6 +195,10 @@
           <p class="social__text">Мега фото! Просто обалдеть. Как вам так удалось?</p>
         </li>
   </template>
+  <template id="error-template">
+    <div class="hidden" style="color: red; text-align: center; font-size: 20pt">
+    </div>
+</template>
   <template id="picture">
     <a href="#" class="picture__link">
       <img class="picture__img" src="" width="182" height="182" alt="Случайная фотография" id="preview">
@@ -213,6 +222,8 @@
     </div>
   </template>
 <script src="js/util.js"></script>
+<script src="js/modal.js"></script>
+<script src="js/backend.js"></script>
 <script src="js/form.js"></script>
 <script src="js/data.js"></script>
 <script src="js/gallery.js"></script>
