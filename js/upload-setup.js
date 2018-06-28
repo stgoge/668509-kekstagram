@@ -224,7 +224,7 @@
   };
 
   var checkEscExceptions = function (evt) {
-    return (evt.target !== tagsElement && evt.target !== description && window.modal.hidden());
+    return (evt.target !== tagsElement && evt.target !== description && window.modal.isHidden());
   };
 
   imageUploadInput.addEventListener('change', function () {
