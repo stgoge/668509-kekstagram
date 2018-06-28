@@ -215,7 +215,6 @@
     scalePin.removeEventListener('mousedown', scalePinMouseDownHandler);
     window.form.removeTagsHandler();
     window.form.removeSubmitHandler();
-    document.querySelector('#saveError').classList.add('hidden');
   };
 
   var closeSetupByEsc = function (evt) {
