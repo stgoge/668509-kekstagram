@@ -56,8 +56,7 @@
   var resizeControlPlus = document.querySelector('.resize__control--plus');
   var resizeControlMinus = document.querySelector('.resize__control--minus');
   var effectsList = document.querySelector('.effects__list');
-  var imageUploadForm = document.querySelector('#upload-select-image');
-  var tagsElement = imageUploadForm.querySelector('.text__hashtags');
+  var tagsElement = document.querySelector('.text__hashtags');
   var scalePinMouseDownHandler;
   var currentStyle;
 
@@ -202,7 +201,8 @@
     resizeControlMinus.addEventListener('click', resizeControlMinusClickHandler);
     resizeControlPlus.addEventListener('click', resizeControlPlusClickHandler);
     effectsList.addEventListener('change', changeFilter);
-    window.form.addHandler();
+    window.form.addTagsHandler();
+    window.form.addSubmitHandler();
   };
 
   var closeImageOverlay = function () {
@@ -213,7 +213,8 @@
     resizeControlPlus.removeEventListener('click', resizeControlPlusClickHandler);
     effectsList.removeEventListener('change', changeFilter);
     scalePin.removeEventListener('mousedown', scalePinMouseDownHandler);
-    window.form.removeHandler();
+    window.form.removeTagsHandler();
+    window.form.removeSubmitHandler();
   };
 
   var closeSetupByEsc = function (evt) {
@@ -223,10 +224,14 @@
   };
 
   var checkEscExceptions = function (evt) {
-    return (evt.target !== tagsElement && evt.target !== description);
+    return (evt.target !== tagsElement && evt.target !== description && window.modal.isHidden());
   };
 
   imageUploadInput.addEventListener('change', function () {
     openImageOverlay();
   });
+
+  window.uploadSetup = {
+    close: closeImageOverlay
+  };
 })();
