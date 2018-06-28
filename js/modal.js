@@ -22,6 +22,10 @@
     }
   };
 
+  var checkModalHidden = function () {
+    return modal.classList.contains('hidden');
+  };
+
   var showMessage = function (error) {
     modalMessage.textContent = error;
     modal.classList.remove('hidden');
@@ -30,6 +34,7 @@
   };
 
   window.modal = {
-    show: showMessage
+    show: showMessage,
+    hidden: checkModalHidden
   };
 })();
