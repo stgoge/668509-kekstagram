@@ -224,8 +224,7 @@
   };
 
   var checkEscExceptions = function (evt) {
-    var modalClassList = document.querySelector('.modal').classList;
-    return (evt.target !== tagsElement && evt.target !== description && modalClassList.contains('hidden'));
+    return (evt.target !== tagsElement && evt.target !== description && window.modal.hidden());
   };
 
   imageUploadInput.addEventListener('change', function () {
