@@ -20,17 +20,18 @@
     return element;
   };
 
+  var posts = [];
   var generatePosts = function (data) {
-    var posts = [];
     for (var i = 0; i < data.length; i++) {
       posts.push(generatePost(data[i]));
     }
-    window.gallery.render(posts);
-    window.data = {
-      posts: posts
-    };
+    window.filters.show();
   };
 
   window.backend.load(generatePosts);
+
+  window.data = {
+    posts: posts
+  };
 
 })();

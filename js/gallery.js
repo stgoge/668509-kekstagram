@@ -15,6 +15,11 @@
     for (var i = 0; i < posts.length; i++) {
       fragment.appendChild(renderPostInGallery(posts[i]));
     }
+    if (previewPage.hasChildNodes()) {
+      previewPage.querySelectorAll('.picture__link').forEach(function (element) {
+        previewPage.removeChild(element);
+      });
+    }
     previewPage.appendChild(fragment);
   };
 
