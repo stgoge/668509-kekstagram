@@ -1,12 +1,12 @@
 'use strict';
 (function () {
-  var SELECTED_FILTER_CLASS = 'img-filters__button--active';
+  var SELECTED_BUTTON_CLASS = 'img-filters__button--active';
 
   var filtersElement = document.querySelector('.img-filters');
   var filtersForm = document.querySelector('.img-filters__form');
-  var currentFilterButtoniD = document.querySelector('.' + SELECTED_FILTER_CLASS).id;
+  var selectedButtoniD = document.querySelector('.' + SELECTED_BUTTON_CLASS).id;
 
-  var buttonIdToFilter = {
+  var buttonIdToList = {
     'filter-popular': function () {
       return window.data.posts;
     },
@@ -30,29 +30,26 @@
     }
   };
 
-  var showFilters = function () {
-    window.gallery.render(buttonIdToFilter[currentFilterButtoniD]());
-    filtersElement.classList.remove('img-filters--inactive');
-    filtersForm.addEventListener('click', filtersFormClickHandler);
-  };
-
-  var changeButton = function (newFilterButton) {
-    document.querySelector('#' + currentFilterButtoniD).classList.remove(SELECTED_FILTER_CLASS);
-    currentFilterButtoniD = newFilterButton.id;
-    newFilterButton.classList.add(SELECTED_FILTER_CLASS);
-    filtersButtonChangeHandler();
-  };
-
-
-  var filtersFormClickHandler = function (evt) {
-    if (evt.target.type === 'button' && evt.target.id !== currentFilterButtoniD) {
-      changeButton(evt.target);
-    }
-  };
-
-  var filtersButtonChangeHandler = window.debounce(function () {
-    window.gallery.render(buttonIdToFilter[currentFilterButtoniD]());
+  var buttonChangeHandler = window.debounce(function () {
+    window.gallery.render(buttonIdToList[selectedButtoniD]());
   });
+
+  var changeButton = function (newButton) {
+    document.querySelector('#' + selectedButtoniD).classList.remove(SELECTED_BUTTON_CLASS);
+    selectedButtoniD = newButton.id;
+    newButton.classList.add(SELECTED_BUTTON_CLASS);
+    buttonChangeHandler();
+  };
+
+  var showFilters = function () {
+    window.gallery.render(buttonIdToList[selectedButtoniD]());
+    filtersElement.classList.remove('img-filters--inactive');
+    filtersForm.addEventListener('click', function (evt) {
+      if (evt.target.type === 'button' && evt.target.id !== selectedButtoniD) {
+        changeButton(evt.target);
+      }
+    });
+  };
 
   window.filters = {
     show: showFilters
