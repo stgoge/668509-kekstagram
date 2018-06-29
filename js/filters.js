@@ -6,12 +6,14 @@
   var filtersForm = document.querySelector('.img-filters__form');
   var selectedButtoniD = document.querySelector('.' + SELECTED_BUTTON_CLASS).id;
 
-  var buttonIdToList = {
+  var buttonIdToPostsList = {
     'filter-popular': function () {
       return window.data.posts;
     },
+
     'filter-new': function () {
       var NEW_POSTS_COUNT = 10;
+
       var randomIndexList = window.data.posts.slice();
       randomIndexList.forEach(function (post) {
         post.randomIndex = Math.random();
@@ -21,6 +23,7 @@
       });
       return randomIndexList.slice(0, NEW_POSTS_COUNT);
     },
+
     'filter-discussed': function () {
       var sortedByCommentsCountList = window.data.posts.slice();
       sortedByCommentsCountList.sort(function (first, second) {
@@ -31,7 +34,7 @@
   };
 
   var buttonChangeHandler = window.debounce(function () {
-    window.gallery.render(buttonIdToList[selectedButtoniD]());
+    window.gallery.render(buttonIdToPostsList[selectedButtoniD]());
   });
 
   var changeButton = function (newButton) {
@@ -42,7 +45,7 @@
   };
 
   var showFilters = function () {
-    window.gallery.render(buttonIdToList[selectedButtoniD]());
+    window.gallery.render(buttonIdToPostsList[selectedButtoniD]());
     filtersElement.classList.remove('img-filters--inactive');
     filtersForm.addEventListener('click', function (evt) {
       if (evt.target.type === 'button' && evt.target.id !== selectedButtoniD) {
