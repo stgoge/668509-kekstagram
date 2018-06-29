@@ -33,21 +33,25 @@
   var showFilters = function () {
     window.gallery.render(buttonIdToFilter[currentFilterButtoniD]());
     filtersElement.classList.remove('img-filters--inactive');
-    filtersForm.addEventListener('click', filtersFormHandler);
+    filtersForm.addEventListener('click', filtersFormClickHandler);
   };
 
-  var changeFilter = function (newFilterButton) {
+  var changeButton = function (newFilterButton) {
     document.querySelector('#' + currentFilterButtoniD).classList.remove(SELECTED_FILTER_CLASS);
     currentFilterButtoniD = newFilterButton.id;
     newFilterButton.classList.add(SELECTED_FILTER_CLASS);
-    window.gallery.render(buttonIdToFilter[newFilterButton.id]());
+    filtersButtonChangeHandler();
   };
 
 
-  var filtersFormHandler = window.debounce(function (evt) {
+  var filtersFormClickHandler = function (evt) {
     if (evt.target.type === 'button' && evt.target.id !== currentFilterButtoniD) {
-      changeFilter(evt.target);
+      changeButton(evt.target);
     }
+  };
+
+  var filtersButtonChangeHandler = window.debounce(function () {
+    window.gallery.render(buttonIdToFilter[currentFilterButtoniD]());
   });
 
   window.filters = {
