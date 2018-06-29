@@ -12,9 +12,9 @@
   };
   var renderGallery = function (posts) {
     var previewPage = document.querySelector('.pictures');
-    for (var i = 0; i < posts.length; i++) {
-      fragment.appendChild(renderPostInGallery(posts[i]));
-    }
+    posts.forEach(function (element) {
+      fragment.appendChild(renderPostInGallery(element));
+    });
     if (previewPage.hasChildNodes()) {
       previewPage.querySelectorAll('.picture__link').forEach(function (element) {
         previewPage.removeChild(element);

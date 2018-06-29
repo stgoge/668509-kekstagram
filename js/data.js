@@ -22,9 +22,9 @@
 
   var posts = [];
   var generatePosts = function (data) {
-    for (var i = 0; i < data.length; i++) {
-      posts.push(generatePost(data[i]));
-    }
+    data.forEach(function (element) {
+      posts.push(generatePost(element));
+    });
     window.filters.show();
   };
 
@@ -33,5 +33,4 @@
   window.data = {
     posts: posts
   };
-
 })();

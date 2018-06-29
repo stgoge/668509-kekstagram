@@ -5,37 +5,37 @@
     maxSize: 100,
     step: 25
   };
-  var IMAGE_STYLE_PROPERTY = {
+  var ImageStyleProperty = {
     'effect-chrome': {
-      cssStyle: 'effects__preview--chrome',
-      minFilterValue: 0,
-      maxFilterValue: 1,
-      filterStringBegins: 'grayscale(',
-      filterStringEnds: ')'},
+      CSS_STYLE: 'effects__preview--chrome',
+      MIN_FILTER_VALUE: 0,
+      MAX_FILTER_VALUE: 1,
+      FILTER_STRING_BEGINS: 'grayscale(',
+      FILTER_STRING_ENDS: ')'},
     'effect-sepia': {
-      cssStyle: 'effects__preview--sepia',
-      minFilterValue: 0,
-      maxFilterValue: 1,
-      filterStringBegins: 'sepia(',
-      filterStringEnds: ')'},
+      CSS_STYLE: 'effects__preview--sepia',
+      MIN_FILTER_VALUE: 0,
+      MAX_FILTER_VALUE: 1,
+      FILTER_STRING_BEGINS: 'sepia(',
+      FILTER_STRING_ENDS: ')'},
     'effect-marvin': {
-      cssStyle: 'effects__preview--marvin',
-      minFilterValue: 0,
-      maxFilterValue: 100,
-      filterStringBegins: 'invert(',
-      filterStringEnds: '%)'},
+      CSS_STYLE: 'effects__preview--marvin',
+      MIN_FILTER_VALUE: 0,
+      MAX_FILTER_VALUE: 100,
+      FILTER_STRING_BEGINS: 'invert(',
+      FILTER_STRING_ENDS: '%)'},
     'effect-phobos': {
-      cssStyle: 'effects__preview--phobos',
-      minFilterValue: 0,
-      maxFilterValue: 3,
-      filterStringBegins: 'blur(',
-      filterStringEnds: 'px)'},
+      CSS_STYLE: 'effects__preview--phobos',
+      MIN_FILTER_VALUE: 0,
+      MAX_FILTER_VALUE: 3,
+      FILTER_STRING_BEGINS: 'blur(',
+      FILTER_STRING_ENDS: 'px)'},
     'effect-heat': {
-      cssStyle: 'effects__preview--heat',
-      minFilterValue: 1,
-      maxFilterValue: 3,
-      filterStringBegins: 'brightness(',
-      filterStringEnds: ')'}
+      CSS_STYLE: 'effects__preview--heat',
+      MIN_FILTER_VALUE: 1,
+      MAX_FILTER_VALUE: 3,
+      FILTER_STRING_BEGINS: 'brightness(',
+      FILTER_STRING_ENDS: ')'}
   };
   var DEFAULT_SCALE_VALUE = 20;
   var DEFAULT_IMAGE_SIZE = 100;
@@ -97,9 +97,9 @@
   };
 
   var generateFilterString = function (scalePercentValue, styleName) {
-    var style = IMAGE_STYLE_PROPERTY[styleName];
-    var numericFilterValue = getPartOfRange(style.minFilterValue, style.maxFilterValue, scalePercentValue);
-    return style.filterStringBegins + numericFilterValue + style.filterStringEnds;
+    var style = ImageStyleProperty[styleName];
+    var numericFilterValue = getPartOfRange(style.MIN_FILTER_VALUE, style.MAX_FILTER_VALUE, scalePercentValue);
+    return style.FILTER_STRING_BEGINS + numericFilterValue + style.FILTER_STRING_ENDS;
   };
 
   var applyFilter = function (scalePercentValue, styleName) {
@@ -122,7 +122,7 @@
       return;
     }
     scaleLine.classList.remove('hidden');
-    var style = IMAGE_STYLE_PROPERTY[styleName].cssStyle;
+    var style = ImageStyleProperty[styleName].CSS_STYLE;
     currentStyle = style;
     imagePreview.classList.add(style);
     applyScaleChange(DEFAULT_SCALE_VALUE, styleName);
@@ -145,7 +145,6 @@
     postWindow.classList.remove('hidden');
     applyImageStyle(getCheckedStyleInputId());
   };
-
 
   var changeFilter = function () {
     scalePin.removeEventListener('mousedown', scalePinMouseDownHandler);

@@ -2,7 +2,7 @@
 (function () {
   var DEBOUNCE_INTERVAL = 500; // ms
 
-  window.debounce = function (fun) {
+  window.debounce = function (func) {
     var lastTimeout = null;
 
     return function () {
@@ -11,7 +11,7 @@
         window.clearTimeout(lastTimeout);
       }
       lastTimeout = window.setTimeout(function () {
-        fun.apply(null, args);
+        func.apply(null, args);
       }, DEBOUNCE_INTERVAL);
     };
   };
