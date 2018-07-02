@@ -200,6 +200,7 @@
     resizeControlMinus.addEventListener('click', resizeControlMinusClickHandler);
     resizeControlPlus.addEventListener('click', resizeControlPlusClickHandler);
     effectsList.addEventListener('change', changeFilter);
+    document.querySelector('body').classList.add('modal-open');
     window.form.addTagsHandler();
     window.form.addSubmitHandler();
   };
@@ -212,6 +213,7 @@
     resizeControlPlus.removeEventListener('click', resizeControlPlusClickHandler);
     effectsList.removeEventListener('change', changeFilter);
     scalePin.removeEventListener('mousedown', scalePinMouseDownHandler);
+    document.querySelector('body').classList.remove('modal-open');
     window.form.removeTagsHandler();
     window.form.removeSubmitHandler();
   };
