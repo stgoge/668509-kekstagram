@@ -206,20 +206,15 @@
 
     <div class="img-upload__message img-upload__message--error error hidden">Ошибка загрузки файла
       <div class="error__links">
-        <a class="error__link" href="#">Попробовать снова</a>
-        <a class="error__link" href="#">Загрузить другой файл</a>
+        <a class="error__link" href="#" id="retry">Попробовать снова</a>
+        <a class="error__link" href="#" id="another">Загрузить другой файл</a>
       </div>
     </div>
   </template>
-  <div class="modal hidden" style="z-index: 2">
-    <div class="modal__content">
-        <div class="modal__message">какое то сообщение</div>
-        <div class="modal__close" tabindex="0">X</div>
-    </div>
 </div>
 <script src="js/debounce.js"></script>
+<script src="js/handlers.js"></script>
 <script src="js/util.js"></script>
-<script src="js/modal.js"></script>
 <script src="js/backend.js"></script>
 <script src="js/form.js"></script>
 <script src="js/filters.js"></script>

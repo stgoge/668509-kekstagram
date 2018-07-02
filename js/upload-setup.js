@@ -39,11 +39,9 @@
   };
   var DEFAULT_SCALE_VALUE = 20;
   var DEFAULT_IMAGE_SIZE = 100;
-  var ESC_KEYCODE = 27;
 
   var resizeInput = document.querySelector('.resize__control--value');
   var imagePreview = document.querySelector('.img-upload__preview');
-  var uploadInput = document.querySelector('#upload-file');
   var postWindow = document.querySelector('.img-upload__overlay');
   var scaleLine = document.querySelector('.img-upload__scale');
   var scaleInput = document.querySelector('input[name="effect-level"]');
@@ -56,7 +54,6 @@
   var resizeControlPlus = document.querySelector('.resize__control--plus');
   var resizeControlMinus = document.querySelector('.resize__control--minus');
   var effectsList = document.querySelector('.effects__list');
-  var tagsElement = document.querySelector('.text__hashtags');
   var scalePinMouseDownHandler;
   var currentStyle;
 
@@ -132,7 +129,7 @@
     resetImageStyle();
     postWindow.classList.add('hidden');
     applyImageSize(DEFAULT_IMAGE_SIZE);
-    uploadInput.value = '';
+    imageUploadInput.value = '';
     tags.value = '';
     description.value = '';
   };
@@ -193,10 +190,10 @@
   };
 
   var openImageOverlay = function () {
+    var escHandlerNeeded = true;
     initiatePreviewStyles();
     addScalePinMouseDownHandler(getCheckedStyleInputId());
-    document.addEventListener('keydown', closeSetupByEsc);
-    imgUploadCancel.addEventListener('click', closeImageOverlay);
+    window.handlers.add(imgUploadCancel, closeImageOverlay, escHandlerNeeded);
     resizeControlMinus.addEventListener('click', resizeControlMinusClickHandler);
     resizeControlPlus.addEventListener('click', resizeControlPlusClickHandler);
     effectsList.addEventListener('change', changeFilter);
@@ -207,8 +204,6 @@
 
   var closeImageOverlay = function () {
     resetPreviewPageToDefaults();
-    document.removeEventListener('keydown', closeSetupByEsc);
-    imgUploadCancel.removeEventListener('click', closeImageOverlay);
     resizeControlMinus.removeEventListener('click', resizeControlMinusClickHandler);
     resizeControlPlus.removeEventListener('click', resizeControlPlusClickHandler);
     effectsList.removeEventListener('change', changeFilter);
@@ -218,21 +213,12 @@
     window.form.removeSubmitHandler();
   };
 
-  var closeSetupByEsc = function (evt) {
-    if (evt.keyCode === ESC_KEYCODE && checkEscExceptions(evt)) {
-      closeImageOverlay();
-    }
-  };
-
-  var checkEscExceptions = function (evt) {
-    return (evt.target !== tagsElement && evt.target !== description && window.modal.isHidden());
-  };
-
   imageUploadInput.addEventListener('change', function () {
     openImageOverlay();
   });
 
   window.uploadSetup = {
-    close: closeImageOverlay
+    close: closeImageOverlay,
+    reset: resetPreviewPageToDefaults,
   };
 })();

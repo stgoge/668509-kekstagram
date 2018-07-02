@@ -13,39 +13,38 @@
     },
     Save: {
       METHOD: 'POST',
-      URL: 'https://js.dump.ac1ademy/kekstagram'
+      URL: 'https://js.dump.academy/kekstagram'
     }
   };
 
-  var initXhr = function (loadHandler) {
+  var loadData = function (successHandler) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
     xhr.addEventListener('load', function () {
-      if (xhr.status === SUCCESS_RESPONSE) {
-        loadHandler(xhr.response);
-      } else {
-        window.modal.show(ConnectionError.STATUS + xhr.status + ' ' + xhr.statusText);
-      }
+      successHandler(xhr.response);
     });
-
-    xhr.addEventListener('error', function () {
-      window.modal.show(ConnectionError.CONNECTION);
-    });
-
-    xhr.addEventListener('timeout', function () {
-      window.modal.show(ConnectionError.TIMEOUT + xhr.timeout);
-    });
-    return xhr;
-  };
-
-  var loadData = function (successHandler) {
-    var xhr = initXhr(successHandler);
     xhr.open(XhrParameter.Load.METHOD, XhrParameter.Load.URL);
     xhr.send();
   };
 
-  var saveForm = function (data, successHandler) {
-    var xhr = initXhr(successHandler);
+  var saveForm = function (data, successHandler, errorHandler) {
+    var xhr = new XMLHttpRequest();
+    xhr.responseType = 'json';
+    xhr.addEventListener('load', function () {
+      if (xhr.status === SUCCESS_RESPONSE) {
+        successHandler(xhr.response);
+      } else {
+        errorHandler(ConnectionError.STATUS + xhr.status + ' ' + xhr.statusText);
+      }
+    });
+
+    xhr.addEventListener('error', function () {
+      errorHandler(ConnectionError.CONNECTION);
+    });
+
+    xhr.addEventListener('timeout', function () {
+      errorHandler(ConnectionError.TIMEOUT + xhr.timeout);
+    });
     xhr.open(XhrParameter.Save.METHOD, XhrParameter.Save.URL);
     xhr.send(data);
   };

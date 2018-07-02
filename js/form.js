@@ -2,14 +2,41 @@
 (function () {
   var tagsElement = document.querySelector('.text__hashtags');
   var imageUploadForm = document.querySelector('#upload-select-image');
+  var imageUploadSection = document.querySelector('.img-upload__form');
+  var imageUploadOverlay = document.querySelector('.img-upload__overlay');
+  var imageUploadInput = document.querySelector('#upload-file');
+
 
   var successHandler = function () {
     window.uploadSetup.close();
   };
 
+  var anotherFileClickHolder = function () {
+    window.uploadSetup.reset();
+    document.querySelector('.img-upload__message--error').classList.add('hidden');
+    imageUploadInput.click();
+  };
+
+  var retryClickHolder = function () {
+    window.backend.save(new FormData(imageUploadForm), successHandler, errorHandler);
+  };
+
+
+  var errorHandler = function (error) {
+    if (!document.querySelector('.img-upload__message--error')) {
+      var errorElement = document.querySelector('#picture').content.querySelector('.img-upload__message--error').cloneNode(true);
+      imageUploadSection.appendChild(errorElement);
+    }
+    document.querySelector('.img-upload__message--error').childNodes[0].textContent = error;
+    document.querySelector('.img-upload__message--error').classList.remove('hidden');
+    imageUploadOverlay.classList.add('hidden');
+    document.querySelector('#retry').addEventListener('click', retryClickHolder);
+    document.querySelector('#another').addEventListener('click', anotherFileClickHolder);
+  };
+
   var imageUploadFormSubmitHandler = function (evt) {
     evt.preventDefault();
-    window.backend.save(new FormData(imageUploadForm), successHandler);
+    window.backend.save(new FormData(imageUploadForm), successHandler, errorHandler);
   };
 
   var addImageUploadFormSubmitHandler = function () {
@@ -21,7 +48,11 @@
   };
 
   var tagsElementInputHandler = function (evt) {
-    tagsElement.setCustomValidity(checkTagsValidity(evt));
+    var message = checkTagsValidity(evt);
+    tagsElement.setCustomValidity(message);
+    if (message) {
+      tagsElement.style.border = '2px solid red';
+    }
   };
 
   var addTagsElementInputHandler = function () {
@@ -56,6 +87,7 @@
     if (tags.length > 5) {
       return 'Не более 5 тегов!';
     }
+    tagsElement.style.border = '';
     return '';
   };
 
