@@ -43,10 +43,9 @@
   var resizeInput = document.querySelector('.resize__control--value');
   var imagePreview = document.querySelector('.img-upload__preview');
   var postWindow = document.querySelector('.img-upload__overlay');
-  var scaleLine = document.querySelector('.img-upload__scale');
+  var scaleLineFieldSet = document.querySelector('.img-upload__scale');
   var scaleInput = document.querySelector('input[name="effect-level"]');
   var scaleLineFill = document.querySelector('.scale__level');
-  var scalePin = document.querySelector('.scale__pin');
   var tags = document.querySelector('.text__hashtags');
   var description = document.querySelector('.text__description');
   var imageUploadInput = document.querySelector('#upload-file');
@@ -54,8 +53,9 @@
   var resizeControlPlus = document.querySelector('.resize__control--plus');
   var resizeControlMinus = document.querySelector('.resize__control--minus');
   var effectsList = document.querySelector('.effects__list');
+  var scaleLine = document.querySelector('.scale__line');
+  var scalePin = document.querySelector('.scale__pin');
   var scalePinMouseDownHandler;
-  var currentStyle;
 
   var getPartOfRange = function (min, max, part) {
     return (part * (max - min) / 100 + min);
@@ -81,7 +81,7 @@
   };
 
   var resetImageStyle = function () {
-    imagePreview.classList.remove(currentStyle);
+    imagePreview.classList.remove(getCheckedStyleInputId());
     resetScale();
   };
 
@@ -107,7 +107,8 @@
     scaleInput.value = Math.round(scalePercentValue);
   };
 
-  var applyScaleChange = function (scalePercentValue, styleName) {
+  var applyScaleChange = function (scalePercentValue) {
+    var styleName = getCheckedStyleInputId();
     renderScalePin(scalePercentValue);
     applyFilter(scalePercentValue, styleName);
     applyScaleInputValue(scalePercentValue);
@@ -115,12 +116,11 @@
 
   var applyImageStyle = function (styleName) {
     if (styleName === 'effect-none') {
-      scaleLine.classList.add('hidden');
+      scaleLineFieldSet.classList.add('hidden');
       return;
     }
-    scaleLine.classList.remove('hidden');
-    var style = ImageStyleProperty[styleName].CSS_STYLE;
-    currentStyle = style;
+    scaleLineFieldSet.classList.remove('hidden');
+    var style = getCheckedStyleInputId();
     imagePreview.classList.add(style);
     applyScaleChange(DEFAULT_SCALE_VALUE, styleName);
   };
@@ -147,38 +147,7 @@
     scalePin.removeEventListener('mousedown', scalePinMouseDownHandler);
     resetImageStyle();
     applyImageStyle(getCheckedStyleInputId());
-    addScalePinMouseDownHandler(getCheckedStyleInputId());
-  };
-
-  var addScalePinMouseDownHandler = function (styleId) {
-    var maxValue = scaleLine.clientWidth;
-    var scaleValue = scalePin.offsetLeft;
-
-    scalePinMouseDownHandler = function (innerEvt) {
-      innerEvt.preventDefault();
-      var startPinCoord = innerEvt.clientX;
-
-      var scalePinMouseMoveHandler = function (moveEvt) {
-        moveEvt.preventDefault();
-        var shift = moveEvt.clientX - startPinCoord;
-        startPinCoord = moveEvt.clientX;
-        var newValue = scaleValue + shift;
-        if ((newValue <= maxValue) && (newValue >= 0)) {
-          scaleValue = newValue;
-          applyScaleChange(scaleValue / maxValue * 100, styleId);
-        }
-      };
-
-      var currentScaleMouseUpHandler = function (mouseUpEvt) {
-        mouseUpEvt.preventDefault();
-        document.removeEventListener('mouseup', currentScaleMouseUpHandler);
-        document.removeEventListener('mousemove', scalePinMouseMoveHandler);
-      };
-
-      document.addEventListener('mouseup', currentScaleMouseUpHandler);
-      document.addEventListener('mousemove', scalePinMouseMoveHandler);
-    };
-    scalePin.addEventListener('mousedown', scalePinMouseDownHandler);
+    window.slider.init(scaleLine, scalePin, applyScaleChange);
   };
 
   var resizeControlMinusClickHandler = function () {
@@ -190,10 +159,9 @@
   };
 
   var openImageOverlay = function () {
-    var escHandlerNeeded = true;
     initiatePreviewStyles();
-    addScalePinMouseDownHandler(getCheckedStyleInputId());
-    window.handlers.add(imgUploadCancel, closeImageOverlay, escHandlerNeeded);
+    window.slider.init(scaleLine, scalePin, applyScaleChange);
+    window.handlers.add(imgUploadCancel, closeImageOverlay, true);
     resizeControlMinus.addEventListener('click', resizeControlMinusClickHandler);
     resizeControlPlus.addEventListener('click', resizeControlPlusClickHandler);
     effectsList.addEventListener('change', changeFilter);
@@ -220,5 +188,6 @@
   window.uploadSetup = {
     close: closeImageOverlay,
     reset: resetPreviewPageToDefaults,
+    currentStyle: getCheckedStyleInputId
   };
 })();
