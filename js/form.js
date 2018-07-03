@@ -1,10 +1,10 @@
 'use strict';
 (function () {
   var tagsElement = document.querySelector('.text__hashtags');
-  var imageUploadForm = document.querySelector('#upload-select-image');
-  var imageUploadSection = document.querySelector('.img-upload__form');
-  var imageUploadOverlay = document.querySelector('.img-upload__overlay');
-  var imageUploadInput = document.querySelector('#upload-file');
+  var imageUploadFormElement = document.querySelector('#upload-select-image');
+  var imageUploadSectionElement = document.querySelector('.img-upload__form');
+  var imageUploadOverlayElement = document.querySelector('.img-upload__overlay');
+  var imageUploadInputElement = document.querySelector('#upload-file');
 
 
   var successHandler = function () {
@@ -14,37 +14,37 @@
   var anotherFileClickHolder = function () {
     window.uploadSetup.reset();
     document.querySelector('.img-upload__message--error').classList.add('hidden');
-    imageUploadInput.click();
+    imageUploadInputElement.click();
   };
 
   var retryClickHolder = function () {
-    window.backend.save(new FormData(imageUploadForm), successHandler, errorHandler);
+    window.backend.save(new FormData(imageUploadFormElement), successHandler, errorHandler);
   };
 
 
   var errorHandler = function (error) {
     if (!document.querySelector('.img-upload__message--error')) {
       var errorElement = document.querySelector('#picture').content.querySelector('.img-upload__message--error').cloneNode(true);
-      imageUploadSection.appendChild(errorElement);
+      imageUploadSectionElement.appendChild(errorElement);
     }
     document.querySelector('.img-upload__message--error').childNodes[0].textContent = error;
     document.querySelector('.img-upload__message--error').classList.remove('hidden');
-    imageUploadOverlay.classList.add('hidden');
-    document.querySelector('#retry').addEventListener('click', retryClickHolder);
-    document.querySelector('#another').addEventListener('click', anotherFileClickHolder);
+    imageUploadOverlayElement.classList.add('hidden');
+    document.querySelector('#retry-request').addEventListener('click', retryClickHolder);
+    document.querySelector('#upload-another-file').addEventListener('click', anotherFileClickHolder);
   };
 
   var imageUploadFormSubmitHandler = function (evt) {
     evt.preventDefault();
-    window.backend.save(new FormData(imageUploadForm), successHandler, errorHandler);
+    window.backend.save(new FormData(imageUploadFormElement), successHandler, errorHandler);
   };
 
   var addImageUploadFormSubmitHandler = function () {
-    imageUploadForm.addEventListener('submit', imageUploadFormSubmitHandler);
+    imageUploadFormElement.addEventListener('submit', imageUploadFormSubmitHandler);
   };
 
   var removeImageUploadFormSubmitHandler = function () {
-    imageUploadForm.removeEventListener('submit', imageUploadFormSubmitHandler);
+    imageUploadFormElement.removeEventListener('submit', imageUploadFormSubmitHandler);
   };
 
   var tagsElementInputHandler = function (evt) {

@@ -5,9 +5,9 @@
   var renderPostInGallery = function (post) {
     var renderedPost = document.querySelector('#picture').content.querySelector('.picture__link').cloneNode(true);
     renderedPost.querySelector('.picture__img').src = post.url;
-    renderedPost.querySelector('.picture__img').id = post.id;
     renderedPost.querySelector('.picture__stat--likes').textContent = post.likes;
     renderedPost.querySelector('.picture__stat--comments').textContent = post.comments.length;
+    renderedPost.id = post.id;
     return renderedPost;
   };
   var renderGallery = function (posts) {

@@ -4,7 +4,7 @@
   var NEW_POSTS_COUNT = 10;
 
   var filtersElement = document.querySelector('.img-filters');
-  var filtersForm = document.querySelector('.img-filters__form');
+  var filtersFormElement = document.querySelector('.img-filters__form');
 
   var buttonIdToPostFilter = {
     'filter-popular': function () {
@@ -45,7 +45,7 @@
   var showFilters = function () {
     buttonChangeHandler();
     filtersElement.classList.remove('img-filters--inactive');
-    filtersForm.addEventListener('click', function (evt) {
+    filtersFormElement.addEventListener('click', function (evt) {
       if (evt.target.type === 'button' && evt.target.id !== getActiveButtonId()) {
         changeButton(evt.target);
       }

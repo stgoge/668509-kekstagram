@@ -20,17 +20,17 @@
     return element;
   };
 
-  var posts = [];
   var generatePosts = function (data) {
+    var posts = [];
     data.forEach(function (element) {
       posts.push(generatePost(element));
     });
     window.filters.show();
+    window.data = {
+      posts: posts
+    };
   };
 
   window.backend.load(generatePosts);
 
-  window.data = {
-    posts: posts
-  };
 })();

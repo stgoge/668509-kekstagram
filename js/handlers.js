@@ -43,10 +43,10 @@
       }
     };
 
-    document.addEventListener('keydown', documentKeydownHandler);
+    element.addEventListener('keydown', elementKeydownHandler);
     element.addEventListener('click', elementClickHandler);
     if (modal) {
-      element.addEventListener('keydown', elementKeydownHandler);
+      document.addEventListener('keydown', documentKeydownHandler);
     }
   };
 

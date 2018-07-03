@@ -7,11 +7,11 @@
     CONNECTION: 'Произошла ошибка соединения'
   };
   var XhrParameter = {
-    Load: {
+    LOAD: {
       METHOD: 'GET',
       URL: 'https://js.dump.academy/kekstagram/data'
     },
-    Save: {
+    SAVE: {
       METHOD: 'POST',
       URL: 'https://js.dump.academy/kekstagram'
     }
@@ -23,7 +23,7 @@
     xhr.addEventListener('load', function () {
       successHandler(xhr.response);
     });
-    xhr.open(XhrParameter.Load.METHOD, XhrParameter.Load.URL);
+    xhr.open(XhrParameter.LOAD.METHOD, XhrParameter.LOAD.URL);
     xhr.send();
   };
 
@@ -45,7 +45,7 @@
     xhr.addEventListener('timeout', function () {
       errorHandler(ConnectionError.TIMEOUT + xhr.timeout);
     });
-    xhr.open(XhrParameter.Save.METHOD, XhrParameter.Save.URL);
+    xhr.open(XhrParameter.SAVE.METHOD, XhrParameter.SAVE.URL);
     xhr.send(data);
   };
 
