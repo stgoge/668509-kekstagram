@@ -22,10 +22,10 @@
 
   var generatePosts = function (data) {
     var posts = [];
-    for (var i = 0; i < data.length; i++) {
-      posts.push(generatePost(data[i]));
-    }
-    window.gallery.render(posts);
+    data.forEach(function (element) {
+      posts.push(generatePost(element));
+    });
+    window.filters.show();
     window.data = {
       posts: posts
     };

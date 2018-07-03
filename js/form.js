@@ -1,27 +1,58 @@
 'use strict';
 (function () {
   var tagsElement = document.querySelector('.text__hashtags');
-  var imageUploadForm = document.querySelector('#upload-select-image');
+  var imageUploadFormElement = document.querySelector('#upload-select-image');
+  var imageUploadSectionElement = document.querySelector('.img-upload__form');
+  var imageUploadOverlayElement = document.querySelector('.img-upload__overlay');
+  var imageUploadInputElement = document.querySelector('#upload-file');
+
 
   var successHandler = function () {
     window.uploadSetup.close();
   };
 
+  var anotherFileClickHolder = function () {
+    window.uploadSetup.reset();
+    document.querySelector('.img-upload__message--error').classList.add('hidden');
+    imageUploadInputElement.click();
+  };
+
+  var retryClickHolder = function () {
+    window.backend.save(new FormData(imageUploadFormElement), successHandler, errorHandler);
+  };
+
+
+  var errorHandler = function (error) {
+    if (!document.querySelector('.img-upload__message--error')) {
+      var errorElement = document.querySelector('#picture').content.querySelector('.img-upload__message--error').cloneNode(true);
+      imageUploadSectionElement.appendChild(errorElement);
+    }
+    document.querySelector('.img-upload__message--error').childNodes[0].textContent = error;
+    document.querySelector('.img-upload__message--error').classList.remove('hidden');
+    imageUploadOverlayElement.classList.add('hidden');
+    document.querySelector('#retry-request').addEventListener('click', retryClickHolder);
+    document.querySelector('#upload-another-file').addEventListener('click', anotherFileClickHolder);
+  };
+
   var imageUploadFormSubmitHandler = function (evt) {
     evt.preventDefault();
-    window.backend.save(new FormData(imageUploadForm), successHandler);
+    window.backend.save(new FormData(imageUploadFormElement), successHandler, errorHandler);
   };
 
   var addImageUploadFormSubmitHandler = function () {
-    imageUploadForm.addEventListener('submit', imageUploadFormSubmitHandler);
+    imageUploadFormElement.addEventListener('submit', imageUploadFormSubmitHandler);
   };
 
   var removeImageUploadFormSubmitHandler = function () {
-    imageUploadForm.removeEventListener('submit', imageUploadFormSubmitHandler);
+    imageUploadFormElement.removeEventListener('submit', imageUploadFormSubmitHandler);
   };
 
   var tagsElementInputHandler = function (evt) {
-    tagsElement.setCustomValidity(checkTagsValidity(evt));
+    var message = checkTagsValidity(evt);
+    tagsElement.setCustomValidity(message);
+    if (message) {
+      tagsElement.style.border = '2px solid red';
+    }
   };
 
   var addTagsElementInputHandler = function () {
@@ -56,6 +87,7 @@
     if (tags.length > 5) {
       return 'Не более 5 тегов!';
     }
+    tagsElement.style.border = '';
     return '';
   };
 

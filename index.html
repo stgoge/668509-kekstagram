@@ -189,10 +189,6 @@
           <p class="social__text">Мега фото! Просто обалдеть. Как вам так удалось?</p>
         </li>
   </template>
-  <template id="error-template">
-    <div class="hidden" style="color: red; text-align: center; font-size: 20pt">
-    </div>
-</template>
   <template id="picture">
     <a href="#" class="picture__link">
       <img class="picture__img" src="" width="182" height="182" alt="Случайная фотография" id="preview">
@@ -210,21 +206,19 @@
 
     <div class="img-upload__message img-upload__message--error error hidden">Ошибка загрузки файла
       <div class="error__links">
-        <a class="error__link" href="#">Попробовать снова</a>
-        <a class="error__link" href="#">Загрузить другой файл</a>
+        <a class="error__link" href="#" id="retry-request">Попробовать снова</a>
+        <a class="error__link" href="#" id="upload-another-file">Загрузить другой файл</a>
       </div>
     </div>
   </template>
-  <div class="modal hidden" style="z-index: 2">
-    <div class="modal__content">
-        <div class="modal__message">какое то сообщение</div>
-        <div class="modal__close" tabindex="0">X</div>
-    </div>
 </div>
+<script src="js/debounce.js"></script>\
+<script src="js/slider.js"></script>
+<script src="js/handlers.js"></script>
 <script src="js/util.js"></script>
-<script src="js/modal.js"></script>
 <script src="js/backend.js"></script>
 <script src="js/form.js"></script>
+<script src="js/filters.js"></script>
 <script src="js/data.js"></script>
 <script src="js/gallery.js"></script>
 <script src="js/big-picture.js"></script>
