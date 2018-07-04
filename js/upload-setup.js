@@ -1,5 +1,7 @@
 'use strict';
 (function () {
+  var DEFAULT_SCALE_VALUE = 20;
+  var DEFAULT_IMAGE_SIZE = 100;
   var ImageResizeProperty = {
     MIN_SIZE: 25,
     MAX_SIZE: 100,
@@ -37,8 +39,6 @@
       FILTER_STRING_BEGINS: 'brightness(',
       FILTER_STRING_ENDS: ')'}
   };
-  var DEFAULT_SCALE_VALUE = 20;
-  var DEFAULT_IMAGE_SIZE = 100;
 
   var postWindow = document.querySelector('.img-upload__overlay');
   var imagePreview = postWindow.querySelector('.img-upload__preview');
@@ -189,7 +189,6 @@
 
   window.uploadSetup = {
     close: closeImageOverlay,
-    reset: resetPreviewPageToDefaults,
-    currentStyle: getCheckedStyleInputId
+    reset: resetPreviewPageToDefaults
   };
 })();

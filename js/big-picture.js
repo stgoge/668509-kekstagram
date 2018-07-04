@@ -47,7 +47,7 @@
     loadMoreCommentsElement.addEventListener('click', loadMoreCommentsClickHandler);
   };
 
-  var noMoreCommentsButton = function () {
+  var hideMoreCommentsButton = function () {
     loadMoreCommentsElement.classList.add('visually-hidden');
     loadMoreCommentsElement.removeEventListener('click', loadMoreCommentsClickHandler);
   };
@@ -66,10 +66,10 @@
     var newCommentsCount = listedCommentsCount + COUNT_OF_COMMENTS_ONE_TIME;
     if (comments.length > newCommentsCount) {
       renderComments(comments, listedCommentsCount, newCommentsCount);
-      loadMoreCommentsElement.removeEvent('click', loadMoreCommentsClickHandler);
+      loadMoreCommentsElement.removeEventListener('click', loadMoreCommentsClickHandler);
       addLoadMoreCommentsButtonClickHandler(comments, newCommentsCount);
     } else {
-      noMoreCommentsButton();
+      hideMoreCommentsButton();
       renderComments(comments, listedCommentsCount, comments.length);
     }
   };

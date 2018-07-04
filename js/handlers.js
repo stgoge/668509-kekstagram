@@ -4,13 +4,10 @@
   var ENTER_KEYCODE = 13;
 
   var isTextInputNotInFocus = function (evt) {
-    if (evt.target.type === 'text' || evt.target.type === 'textarea') {
-      return false;
-    }
-    return true;
+    return !(evt.target.type === 'text' || evt.target.type === 'textarea');
   };
 
-  var addHandlers = function (element, func, modal) {
+  var addHandlers = function (element, cb, modal) {
 
     var removeHandlers = function () {
       document.removeEventListener('keydown', documentKeydownHandler);
@@ -22,13 +19,13 @@
 
     var documentKeydownHandler = function (evt) {
       if (evt.keyCode === ESC_KEYCODE && isTextInputNotInFocus(evt)) {
-        func();
+        cb();
         removeHandlers();
       }
     };
 
     var elementClickHandler = function (evt) {
-      func(evt);
+      cb(evt);
       if (modal) {
         removeHandlers();
       }
@@ -36,7 +33,7 @@
 
     var elementKeydownHandler = function (evt) {
       if (evt.keyCode === ENTER_KEYCODE) {
-        func(evt);
+        cb(evt);
         if (modal) {
           removeHandlers();
         }
