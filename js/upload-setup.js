@@ -1,6 +1,6 @@
 'use strict';
 (function () {
-  var DEFAULT_SCALE_VALUE = 20;
+  var DEFAULT_SCALE_VALUE = 100;
   var DEFAULT_IMAGE_SIZE = 100;
   var ImageResizeProperty = {
     MIN_SIZE: 25,

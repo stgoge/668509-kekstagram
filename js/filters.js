@@ -13,9 +13,14 @@
 
     'filter-new': function () {
       var postsCopy = window.data.posts.slice();
-      postsCopy.sort(function () {
-        return (Math.random() - 0.5);
-      });
+      var j;
+      var temp;
+      for (var i = postsCopy.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        temp = postsCopy[j];
+        postsCopy[j] = postsCopy[i];
+        postsCopy[i] = temp;
+      }
       return postsCopy.slice(0, NEW_POSTS_COUNT);
     },
 

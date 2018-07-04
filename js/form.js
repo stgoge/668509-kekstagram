@@ -1,5 +1,8 @@
 'use strict';
 (function () {
+  var MIN_LENGTH = 2;
+  var MAX_LENGTH = 20;
+  var MAX_TAGS_COUNT = 5;
   var ERROR_INPUT_BORDER = '2px solid red';
   var TagsCheckError = {
     HASH_FIRST: 'Теги должны начинаться с #!',
@@ -7,7 +10,7 @@
     TAG_MAX_LENGTH: 'В теге должно быть не более 20 символов включая #!',
     SEPARATOR: 'Теги нужно разделять пробелами!',
     UNIQUE: 'Теги должны быть уникальными!',
-    TAG_MAX_COUNT: 'Не более 5 тегов!'
+    MAX_TAGS_COUNT: 'Не более 5 тегов!'
   };
 
   var tagsElement = document.querySelector('.text__hashtags');
@@ -80,10 +83,10 @@
       if ((tags[i].charAt(0) !== '#') || (tags[i] === '')) {
         return TagsCheckError.HASH_FIRST;
       }
-      if (tags[i].length < 2) {
+      if (tags[i].length < MIN_LENGTH) {
         return TagsCheckError.MIN_LENGTH;
       }
-      if (tags[i].length > 20) {
+      if (tags[i].length > MAX_LENGTH) {
         return TagsCheckError.TAG_MAX_LENGTH;
       }
       if (tags[i].indexOf('#', 1) > 1) {
@@ -95,8 +98,8 @@
         }
       }
     }
-    if (tags.length > 5) {
-      return TagsCheckError.TAG_MAX_COUNT;
+    if (tags.length > MAX_TAGS_COUNT) {
+      return TagsCheckError.MAX_TAGS_COUNT;
     }
     tagsElement.style.border = '';
     return '';

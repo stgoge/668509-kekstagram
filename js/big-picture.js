@@ -28,7 +28,7 @@
   };
 
   var getCountEndingFromCount = function (count) {
-    var ending = count.toString().slice(-1) === '1' ? ' комментария' : ' комментариев';
+    var ending = ((count % 10) === 1) && (count !== 11) ? ' комментария' : ' комментариев';
     return ending;
   };
 
@@ -104,9 +104,9 @@
   };
 
   var picturesHandler = function (evt) {
+    var posts = window.data.posts;
     var id = getPictureIdFromElement(evt.target);
-    if (id) {
-      var posts = window.data.posts;
+    if (posts[id]) {
       renderBigPicture(posts[id]);
       window.handlers.add(bigPictureCancelElement, closeBigPicture, true);
     }
